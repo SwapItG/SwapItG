@@ -1,0 +1,8 @@
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !.well-known/acme-challenge
+RewriteCond %{REQUEST_URI} !(.*).txt
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteRule ^/?firstlogin/(\w+)$ /pages/firstlogin.php?c=$1
+RewriteRule ^/?logout/(\w+)$ /pages/logout.php?csrf_token=$1
+RewriteRule ^/?(\w+)$ /pages/$1.php
