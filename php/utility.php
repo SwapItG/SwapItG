@@ -10,5 +10,6 @@
 		if(strlen($s) > 32) {
 			return false;
 		}
+		return true;
 	}
 ?>
