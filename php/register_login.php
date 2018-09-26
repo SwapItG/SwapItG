@@ -1,5 +1,5 @@
 <?php
-	require_once(__DIR__ . "/db_config.php");
+	require_once(__DIR__ . "/db_connect.php");
 	require_once(__DIR__ . "/utility.php");
 	require_once(__DIR__ . "/session.php");
 
@@ -10,9 +10,7 @@
 	//return 4 -> email already used
 	//return 5 -> email couldnt be sent
 	function register($name, $email, $password, $password2) {
-		global $db_host, $db_name, $db_user, $db_pass;
-		$pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass);
-	    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		global $pdo;
 
 		$pdo->query("DELETE FROM user WHERE verified = 0 AND TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, code_generation_time)) > 600");
 
@@ -67,10 +65,9 @@
 	//return 1 -> some parameters are empty
 	//return 2 -> verification-code time passed or wrong email
 	//return 3 -> wrong password
+  //return 4 -> already validated
 	function firstlogin($email, $password, $verification_code) {
-		global $db_host, $db_name, $db_user, $db_pass;
-		$pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass);
-	    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		global $pdo;
 
 		$pdo->query("DELETE FROM user WHERE verified = 0 AND TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, code_generation_time)) > 600");
 
@@ -108,9 +105,7 @@
 	//return 2 -> account does not exist
 	//return 3 -> wrong password
 	function login($email, $password) {
-		global $db_host, $db_name, $db_user, $db_pass;
-		$pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass);
-	    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		global $pdo;
 
 		if(empty($email) || is_array($email) || empty($password) || is_array($password)) {
 			return 1;
@@ -140,9 +135,7 @@
 	//return 3 -> wrong email
 	//return 4 -> wrong password
 	function delete_account($email, $password) {
-		global $db_host, $db_name, $db_user, $db_pass;
-		$pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass);
-	    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		global $pdo;
 
 		if(!logedin()) {
 			return 1;
@@ -179,9 +172,7 @@
 	//return 2 -> account does not exist
 	//return 3 -> email couldnt be sent
 	function password_change($email) {
-		global $db_host, $db_name, $db_user, $db_pass;
-		$pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass);
-	    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		global $pdo;
 
 		if(empty($email) || is_array($email)) {
 			return 1;
@@ -226,9 +217,7 @@
 	//return 2 -> verification-code time passed or wrong email
 	//return 3 -> password has to be at least 8 chars long and at most 32 chars long
 	function password_change_login($email, $password, $verification_code) {
-		global $db_host, $db_name, $db_user, $db_pass;
-		$pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass);
-	    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+		global $pdo;
 
 		$pdo->query("DELETE FROM user WHERE verified = 0 AND TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, code_generation_time)) > 600");
 

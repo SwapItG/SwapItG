@@ -6,90 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Swapit</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cookie">
-    <link rel="stylesheet" href="assets/css/Bold-BS4-Footer-Big-Logo.css">
-    <link rel="stylesheet" href="assets/css/dh-navbar-inverse.css">
     <link rel="stylesheet" href="assets/css/Filter.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-    <link rel="stylesheet" href="assets/css/Pretty-Footer.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
     <style>
-    div {
-        border-color:white;
-        border-width:1px;
-        color:white;
-    }
+        div td {
+            border-width:1px;
+            border:solid;
+        }
 
-    .contentUserPostHeaderTable {
-        border-collapse:collapse;
-        border-width:1px;
-        width:100%;
-        min-width: 900px;
-        border-spacing: 0;
-    }
+        .contentUserPostHeaderTable {
+            border-collapse:collapse;
+            border-width:1px;
+            width:100%;
+            min-width: 900px;
+            border-spacing: 0;
+        }
 
-    .contentUserPostHeaderTable th {
-        border-right:solid;
-        width:16.6%;
-        text-align: center;
-        border-width:1px;
-    }
+        .contentUserPostHeaderTable th {
+            border-right:solid;
+            border:solid;
+            width:16.6%;
+            text-align: center;
+            border-width:1px;
+            background-color:#ccc;
+        }
 
-    .contentUserPostTable {
-        border-collapse: collapse;
-        width:100%;
-        box-shadow: 0px 4px 4px #000;
-        height:100px;
-        border-radius:4px;
-        background-color:#222;
-        margin-bottom:15px
-    }
+        .contentUserPostTable {
+            border-collapse: collapse;
+            width:100%;
+            height:100px;
+            border-radius:4px;
+            margin-bottom:15px
+        }
 
-    .contentUserPostTable td {
-        width:16.6%;
-        border-width:1px;
-        text-align: center;
-        border-spacing:0px;
-        padding:5px;
-        padding-bottom:25px;
-    }
+        .contentUserPostTable td {
+            width:16.6%;
+            border-width:1px;
+            text-align: center;
+            border-spacing:0px;
+            padding:5px;
+            padding-bottom:25px;
+        }
 
-    .contentUserPostDIV {
-        overflow-x: auto;
-    }
+        .contentUserPostDIV {
+            overflow-x: auto;
+        }
 
-    .contentUserPostNameDIV {
-        text-align:left;
-        color:orange;
-        font-size:13px;
-        padding-left:15px;
-        margin-bottom:-1px;
-        margin-left:-1px;
-        border-top-right-radius: 6px;
-        border-top-left-radius: 6px;
-    }
+        .contentUserPostNameDIV {
+            text-align:left;
+            color:orange;
+            font-size:13px;
+            padding-left:15px;
+            margin-bottom:-1px;
+            margin-left:-1px;
+        }
 
-    .paginationDiv {
-        margin-top:25px;
-        margin-bottom:-25px;
-        color:black;
-    }
+        .paginationDiv {
+            margin-top:25px;
+            margin-bottom:-25px;
+        }
 
-    #contentHeader th {
-        background-color:rgba(255, 154, 50, 1);
-        height:35px;
-    }
+        #contentHeader th {
+            height:35px;
+        }
 
-    .contentHeaderSticky {
-        position: fixed;
-        top: 0;
-        width: 100%;
-    }
+        .contentHeaderSticky {
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
     </style>
 </head>
-<body style="background-color:#1b1c19;">
-<?php include "header.php" ?>
+<body>
+    <?php include "header.php" ?>
     <!-- Placeholder -->
     <div style="height:15vh">
     </div>
@@ -162,190 +150,33 @@
     <div style="overflow-x:auto">
         <table class="contentUserPostHeaderTable">
             <tbody>
-            <tr>
-                <td style="border:none" colspan="6">
-                    <div>
-                        <table class="contentUserPostTable">
-                            <tr>
-                                <td style="padding:0px;background-image:none;border:none">
-                                    <div class="contentUserPostNameDIV">
-                                        FloX45aaaaa
-                                    </div>
-                                </td>
-                                <td style="background-image:none;border:none" colspan="5">
-                            </tr>
-                            <tr>
-                                <td>Rocket League
-                                <td style="font-size:13px">I would like to trade some wheels
-                                <td>2m ago
-                                <td>Steam
-                                <td>Item
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td style="border:none" colspan="6">
-                    <div>
-                        <table class="contentUserPostTable">
-                            <tr>
-                                <td style="padding:0px;background-image:none;border:none">
-                                    <div class="contentUserPostNameDIV">
-                                        FloX45aaaaa
-                                    </div>
-                                </td>
-                                <td style="background-image:none;border:none" colspan="5">
-                            </tr>
-                            <tr>
-                                <td>Rocket League
-                                <td style="font-size:13px">I would like to trade some wheels
-                                <td>2m ago
-                                <td>Steam
-                                <td>Item
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td style="border:none" colspan="6">
-                    <div>
-                        <table class="contentUserPostTable">
-                            <tr>
-                                <td style="padding:0px;background-image:none;border:none">
-                                    <div class="contentUserPostNameDIV">
-                                        FloX45aaaaa
-                                    </div>
-                                </td>
-                                <td style="background-image:none;border:none" colspan="5">
-                            </tr>
-                            <tr>
-                                <td>Rocket League
-                                <td style="font-size:13px">I would like to trade some wheels
-                                <td>2m ago
-                                <td>Steam
-                                <td>Item
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td style="border:none" colspan="6">
-                    <div>
-                        <table class="contentUserPostTable">
-                            <tr>
-                                <td style="padding:0px;background-image:none;border:none">
-                                    <div class="contentUserPostNameDIV">
-                                        FloX45aaaaa
-                                    </div>
-                                </td>
-                                <td style="background-image:none;border:none" colspan="5">
-                            </tr>
-                            <tr>
-                                <td>Rocket League
-                                <td style="font-size:13px">I would like to trade some wheels
-                                <td>2m ago
-                                <td>Steam
-                                <td>Item
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td style="border:none" colspan="6">
-                    <div>
-                        <table class="contentUserPostTable">
-                            <tr>
-                                <td style="padding:0px;background-image:none;border:none">
-                                    <div class="contentUserPostNameDIV">
-                                        FloX45aaaaa
-                                    </div>
-                                </td>
-                                <td style="background-image:none;border:none" colspan="5">
-                            </tr>
-                            <tr>
-                                <td>Rocket League
-                                <td style="font-size:13px">I would like to trade some wheels
-                                <td>2m ago
-                                <td>Steam
-                                <td>Item
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td style="border:none" colspan="6">
-                    <div>
-                        <table class="contentUserPostTable">
-                            <tr>
-                                <td style="padding:0px;background-image:none;border:none">
-                                    <div class="contentUserPostNameDIV">
-                                        FloX45aaaaa
-                                    </div>
-                                </td>
-                                <td style="background-image:none;border:none" colspan="5">
-                            </tr>
-                            <tr>
-                                <td>Rocket League
-                                <td style="font-size:13px">I would like to trade some wheels
-                                <td>2m ago
-                                <td>Steam
-                                <td>Item
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td style="border:none" colspan="6">
-                    <div>
-                        <table class="contentUserPostTable">
-                            <tr>
-                                <td style="padding:0px;background-image:none;border:none">
-                                    <div class="contentUserPostNameDIV">
-                                        FloX45aaaaa
-                                    </div>
-                                </td>
-                                <td style="background-image:none;border:none" colspan="5">
-                            </tr>
-                            <tr>
-                                <td>Rocket League
-                                <td style="font-size:13px">I would like to trade some wheels
-                                <td>2m ago
-                                <td>Steam
-                                <td>Item
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td style="border:none" colspan="6">
-                    <div>
-                        <table class="contentUserPostTable">
-                            <tr>
-                                <td style="padding:0px;background-image:none;border:none">
-                                    <div class="contentUserPostNameDIV">
-                                        FloX45aaaaa
-                                    </div>
-                                </td>
-                                <td style="background-image:none;border:none" colspan="5">
-                            </tr>
-                            <tr>
-                                <td>Rocket League
-                                <td style="font-size:13px">I would like to trade some wheels
-                                <td>2m ago
-                                <td>Steam
-                                <td>Item
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
+            <?php
+            for ($i=0;$i<8;$i++) {
+              echo '<tr>
+                  <td style="border:none" colspan="6">
+                      <div>
+                          <table class="contentUserPostTable">
+                              <tr>
+                                  <td style="">
+                                      <div class="contentUserPostNameDIV">
+                                          FloX'.($i+12).'aaaaa
+                                      </div>
+                                  </td>
+                                  <td style="background-image:none;border:none" colspan="5">
+                              </tr>
+                              <tr>
+                                  <td>Rocket League
+                                  <td style="font-size:13px">I would like to trade some wheels
+                                  <td>'.$i.'m ago
+                                  <td>Steam
+                                  <td>Item
+                              </tr>
+                          </table>
+                      </div>
+                  </td>
+              </tr> ';
+            }
+            ?>
             </tbody>
         </table>
     </div>
@@ -366,24 +197,22 @@
     <?php include "footer.php" ?>
 </body>
 </html>
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <script>
-// When the user scrolls the page, execute myFunction
-window.onscroll = function() {myFunction()};
+    // When the user scrolls the page, execute myFunction
+    window.onscroll = function() {myFunction()};
 
-// Get the navbar
-var navbar = document.getElementById("contentHeader");
+    // Get the navbar
+    var navbar = document.getElementById("contentHeader");
 
-// Get the offset position of the navbar
-var sticky = navbar.offsetTop;
+    // Get the offset position of the navbar
+    var sticky = navbar.offsetTop;
 
-// Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
-function myFunction() {
-  if (window.pageYOffset >= sticky) {
-    navbar.classList.add("contentHeaderSticky")
-  } else {
-    navbar.classList.remove("contentHeaderSticky");
-  }
-}
+    // Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
+    function myFunction() {
+      if (window.pageYOffset >= sticky) {
+        navbar.classList.add("contentHeaderSticky")
+      } else {
+        navbar.classList.remove("contentHeaderSticky");
+      }
+    }
 </script>
