@@ -16,6 +16,7 @@
 	</head>
 	<body>
 		<form enctype="multipart/form-data" action="" method="post">
+			<input type="file" name="image" value="">
 			<input type="submit" name="submit" value="submit">
 		</form>
 	</body>
