@@ -12,4 +12,14 @@
 		}
 		return true;
 	}
+
+	function valid_name_check($s) {
+		if(strlen($s) < 3) {
+			return false;
+		}
+		if(strlen($s) > 32) {
+			return false;
+		}
+		return true;
+	}
 ?>

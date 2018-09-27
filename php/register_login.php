@@ -6,7 +6,7 @@
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> passwords dont match
-	//return 3 -> password has to be at least 8 chars long and at most 32 chars long
+	//return 3 -> the password or the user name does not meet our requirements
 	//return 4 -> email already used
 	//return 5 -> email couldnt be sent
 	function register($name, $email, $password, $password2) {
@@ -22,7 +22,7 @@
 			return 2;
 		}
 
-		if(!password_security_check($password)) {
+		if(!password_security_check($password) || valid_name_check($name)) {
 			return 3;
 		}
 
@@ -50,7 +50,7 @@
 			$sql = "INSERT INTO user (email, name, password, verification_code) VALUES (:email, :name, :password_hash, :verification_code)";
 	        $sth = $pdo->prepare($sql);
 			$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
-			$sth->bindParam(":name", $name, PDO::PARAM_STR);
+			$sth->bindParam(":name", htmlspecialchars($name), PDO::PARAM_STR);
 			$sth->bindParam(":password_hash", $password_hash, PDO::PARAM_STR);
 			$sth->bindParam(":verification_code", $verification_code, PDO::PARAM_STR);
 	        $sth->execute();
@@ -215,7 +215,7 @@
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> verification-code time passed or wrong email
-	//return 3 -> password has to be at least 8 chars long and at most 32 chars long
+	//return 3 -> the password does not meet our requirements
 	function password_change_login($email, $password, $verification_code) {
 		global $pdo;
 
