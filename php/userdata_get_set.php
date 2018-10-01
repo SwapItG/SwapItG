@@ -36,19 +36,20 @@
 		}
 	}
 
-	function setName($name) {
+	function setName($name, $check_only = false) {
 		if(logedin()) {
 			if(!valid_name_check($name)) {
 				return false;
 			}
 
-			global $pdo;
-
-			$sql = "UPDATE user SET name = :name WHERE id = :id";
-			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":name", htmlspecialchars($name), PDO::PARAM_STR);
-			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
-			$sth->execute();
+			if(!$check_only) {
+				global $pdo;
+				$sql = "UPDATE user SET name = :name WHERE id = :id";
+				$sth = $pdo->prepare($sql);
+				$sth->bindParam(":name", htmlspecialchars($name), PDO::PARAM_STR);
+				$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+				$sth->execute();
+			}
 			return true;
 		} else {
 			return false;
@@ -69,15 +70,19 @@
 		}
 	}
 
-	function setSteamProfile($profile_link) {
+	function setSteamProfile($profile_link, $check_only = false) {
 		if(logedin()) {
-			global $pdo;
-
-			$sql = "UPDATE user SET steam_profile = :steam_profile  WHERE id = :id";
-			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":steam_profile", htmlspecialchars($profile_link), PDO::PARAM_STR);
-			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
-			$sth->execute();
+			if(empty($profile_link) || is_array($profile_link)) {
+				return false;
+			}
+			if(!$check_only) {
+				global $pdo;
+				$sql = "UPDATE user SET steam_profile = :steam_profile  WHERE id = :id";
+				$sth = $pdo->prepare($sql);
+				$sth->bindParam(":steam_profile", htmlspecialchars($profile_link), PDO::PARAM_STR);
+				$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+				$sth->execute();
+			}
 			return true;
 		} else {
 			return false;
@@ -145,16 +150,36 @@
 		}
 	}
 
-	function setInfo($info) {
+	function setInfo($info, $check_only = false) {
 		if(logedin()) {
-			global $pdo;
-
-			$sql = "UPDATE user SET info = :info  WHERE id = :id";
-			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":info", htmlspecialchars($info), PDO::PARAM_STR);
-			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
-			$sth->execute();
+			if(empty($info) || is_array($info)) {
+				return false;
+			}
+			if(strlen($info > 512)) {
+				return false;
+			}
+			if(!$check_only) {
+				global $pdo;
+				$sql = "UPDATE user SET info = :info  WHERE id = :id";
+				$sth = $pdo->prepare($sql);
+				$sth->bindParam(":info", htmlspecialchars($info), PDO::PARAM_STR);
+				$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+				$sth->execute();
+			}
 			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function setAll($name, $profile_link, $info, $image_post_name) {
+		if(setName($name, true) && setSteamProfile($profile_link, true) && setInfo($info, true)) {
+			if(setImage($image_post_name) > 1) {
+				return false;
+			}
+			setName($name);
+			setSteamProfile($profile_link);
+			setInfo($info);
 		} else {
 			return false;
 		}

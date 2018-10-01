@@ -17,7 +17,7 @@
 <body style="font-size:12;">
     <nav style="position:inherit" class="navbar navbar-light navbar-expand-md fixed-top bg-dark navigation-clean navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#" style="padding:0px;margin-left:0px;height:75px;">
+          <a class="navbar-brand" href="https://swapitg.com" style="padding:0px;margin-left:0px;height:75px;">
            <img class="img-fluid" src="assets/img/SwapIT_Logo.png"></a>
            <button onclick="showMenu()" class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon" style="background-color:rgba(255,255,255,0);"></span></button>
             <div

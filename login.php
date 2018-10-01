@@ -2,16 +2,14 @@
 require_once(__DIR__ . "/php/register_login.php");
 require_once(__DIR__ . "/php/userdata_get_set.php");
 require_once(__DIR__ . "/php/session.php");
+setToken();
 login($_POST["logEMail"],$_POST["logPassw"]);
-if (isset($_POST["logout"])) {
-    session_logout();
-}
 ?>
 
 <?php
-echo '<li style="padding-top:8px;" role="presentation"><a id="navHome" style="height:100%" class="nav-link-correction" href="https://swapitg.com/" uk-scroll="offset:50">Home</a></li>';
+echo '<li style="" role="presentation"><a class="nav-link-correction navItemAlign" href="https://swapitg.com/" uk-scroll="offset:50">HOME</a></li>';
 if (empty(logedin())) {
-  echo '<li style="padding-top:8px;" role="presentation"><a id="navHome" style="height:100%" class="nav-link-correction" href="registration.php" uk-scroll="offset:50">Register</a></li>';
+  echo '<li role="presentation"><a class="nav-link-correction navItemAlign" href="registration.php" uk-scroll="offset:50">Register</a></li>';
   echo '<div id="loginContainer">
             <form method="POST" action="">
                 <input class="logInput" type="text" name="logEMail" placeholder="email" />
@@ -21,7 +19,7 @@ if (empty(logedin())) {
         </div>';
 } else {
   echo '<li class="nav-item" role="presentation">
-            <a class="nav-link-correction" href="#" uk-scroll="offset:50">
+            <a class="navItemAlign" style="border-color:red" class="" uk-scroll="offset:50">
                 <div id="profileCollapseMenu">
                     <ul style="list-style-type: none;">
                         <li class="collapseMenuLinks"> new trade
@@ -29,16 +27,17 @@ if (empty(logedin())) {
                         <li class="collapseMenuLinks"> account
                         </li>
                         <li>
-                            <form method="POST" action="">
+                            <form method="POST" action="https://swapitg.com/logout">
+                                <input type="hidden" name="csrf_token" value="'.getToken().'" />
                                 <input id="signOutButton" type="submit" name="logout" value="SIGN OUT" />
                             </form>
                         </li>
                     </ul>
                 </div>
-                <label onclick="toggleUserMenu()">
+                <span onclick="toggleUserMenu()">
                     <span id="uname">'.getName().'</span>
                     <span id="collapseArrow"> ▼</span>
-                </label>
+                </span>
                 <img id="profilePic" src="'.getImage().'" />
             </a>
         </li>';
@@ -47,7 +46,7 @@ if (empty(logedin())) {
 <html>
     <head>
         <style>
-        a,li{
+        a,li,ul{
           border:none;
         }
             :root {
@@ -61,6 +60,12 @@ if (empty(logedin())) {
                 height:var(--form-height);
                 width:var(--form-input-width);
                 font-size:12px;
+            }
+            .navItemAlign {
+                height:100%;
+                display:block;
+                display: flex;
+                align-items: center;
             }
             #loginContainer {
                 position:absolute;
@@ -117,7 +122,7 @@ if (empty(logedin())) {
                 #profileCollapseMenu {
                     left:0px;
                     top:195px;
-                    border-bottom-right-radius:20px;
+                    border-bottom-right-radius:8px;
                     z-index:3;
                 }
                 #loginContainer {

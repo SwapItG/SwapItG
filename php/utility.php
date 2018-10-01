@@ -4,6 +4,9 @@
 	}
 
 	function password_security_check($s) {
+		if(empty($s) || is_array($s)) {
+			return false;
+		}
 		if(strlen($s) < 8) {
 			return false;
 		}
@@ -14,6 +17,9 @@
 	}
 
 	function valid_name_check($s) {
+		if(empty($s) || is_array($s)) {
+			return false;
+		}
 		if(strlen($s) < 3) {
 			return false;
 		}
