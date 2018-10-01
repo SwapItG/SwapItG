@@ -22,7 +22,7 @@
 			return 2;
 		}
 
-		if(!password_security_check($password) || valid_name_check($name)) {
+		if(!password_security_check($password) || !valid_name_check($name)) {
 			return 3;
 		}
 
