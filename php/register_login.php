@@ -65,7 +65,7 @@
 	//return 1 -> some parameters are empty
 	//return 2 -> verification-code time passed or wrong email
 	//return 3 -> wrong password
-  //return 4 -> already validated
+	//return 4 -> already validated
 	function firstlogin($email, $password, $verification_code) {
 		global $pdo;
 
@@ -82,7 +82,16 @@
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
-			return 2;
+			$sql = "SELECT id FROM user WHERE email = :email AND verified = 1";
+			$sth = $pdo->prepare($sql);
+			$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+			$sth->execute();
+
+			if($sth->rowCount() == 0) {
+				return 2;
+			} else {
+				return 4;
+			}
 		}
 
 		$id_password = $sth->fetch();
@@ -96,7 +105,6 @@
 		$sth->execute();
 
 		login($email, $password);
-		header("Location: https://swapitg.com");
 		return 0;
 	}
 
