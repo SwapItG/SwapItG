@@ -64,6 +64,57 @@
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> verification-code time passed or wrong email
+	//return 3 -> already validated
+	//return 4 -> email couldnt be sent
+	function register_resend_email($email) {
+		global $pdo;
+
+		$pdo->query("DELETE FROM user WHERE verified = 0 AND TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, code_generation_time)) > 600");
+
+		if(empty($email) || is_array($email)) {
+			return 1;
+		}
+
+		$sql = "SELECT name, verification_code FROM user WHERE email = :email AND verified = 0";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+		$sth->execute();
+
+		if($sth->rowCount() == 0) {
+			$sql = "SELECT id FROM user WHERE email = :email AND verified = 1";
+			$sth2 = $pdo->prepare($sql);
+			$sth2->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+			$sth2->execute();
+
+			if($sth2->rowCount() == 0) {
+				return 2;
+			} else {
+				return 3;
+			}
+		}
+
+		$name_verification_code = $sth->fetch();
+		$name = $name_verification_code["name"];
+		$verification_code = $name_verification_code["verification_code"];
+
+		$reg_link = "https://swapitg.com/firstlogin/$verification_code";
+		$subject = "Registration";
+		$mailfile = fopen(__DIR__ . "/register_mail_template.html", "r") or die("Unable to open file!");
+		$message = strtr(fread($mailfile, filesize(__DIR__ . "/register_mail_template.html")), array('$reg_link' => $reg_link, '$name' => htmlspecialchars($name)));
+		fclose($mailfile);
+		$sender_email = "no-reply@swapitg.com";
+		$sender_name = "SwapitG no-reply";
+
+		if(mail($email, $subject, wordwrap($message, 70, "\r\n"), "From: $sender_name<$sender_email>\r\nContent-type: text/html; charset=utf-8", " -f " . $sender_email)) {
+			return 0;
+		} else {
+			return 4;
+		}
+	}
+
+	//return 0 -> worked
+	//return 1 -> some parameters are empty
+	//return 2 -> verification-code time passed or wrong email
 	//return 3 -> wrong password
 	//return 4 -> already validated
 	function firstlogin($email, $password, $verification_code) {
@@ -83,11 +134,11 @@
 
 		if($sth->rowCount() == 0) {
 			$sql = "SELECT id FROM user WHERE email = :email AND verified = 1";
-			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
-			$sth->execute();
+			$sth2 = $pdo->prepare($sql);
+			$sth2->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+			$sth2->execute();
 
-			if($sth->rowCount() == 0) {
+			if($sth2->rowCount() == 0) {
 				return 2;
 			} else {
 				return 4;
@@ -172,6 +223,7 @@
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":id", $id_password["id"], PDO::PARAM_INT);
 		$sth->execute();
+		session_logout();
 		return 0;
 	}
 

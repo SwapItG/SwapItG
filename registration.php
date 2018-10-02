@@ -6,6 +6,10 @@
 
   switch ($regValidationResult) {
         case 0:
+            session_start();
+            $_SESSION["RegConfirm"] = true;
+            $_SESSION["Password"] = $_POST["regPassw"];
+            $_SESSION["EMail"] = $_POST["regEMail"];
             header('Location:'.'registerValidation.php');
             break;
         case 1:

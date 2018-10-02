@@ -38,7 +38,7 @@ if (empty(logedin())) {
                     <span id="uname">'.getName().'</span>
                     <span id="collapseArrow"> ▼</span>
                 </span>
-                <img id="profilePic" src="'.getImage().'" />
+                <img id="profilePic" src="'if(getImage() == 0){echo("#");}else{echo (getImage())}'" />
             </a>
         </li>';
 }

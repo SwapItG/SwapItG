@@ -72,7 +72,10 @@
 
 	function setSteamProfile($profile_link, $check_only = false) {
 		if(logedin()) {
-			if(empty($profile_link) || is_array($profile_link)) {
+			if(is_null($profile_link) || is_array($profile_link)) {
+				return false;
+			}
+			if(strlen($profile_link) > 64) {
 				return false;
 			}
 			if(!$check_only) {
@@ -152,10 +155,10 @@
 
 	function setInfo($info, $check_only = false) {
 		if(logedin()) {
-			if(empty($info) || is_array($info)) {
+			if(is_null($info) || is_array($info)) {
 				return false;
 			}
-			if(strlen($info > 512)) {
+			if(strlen($info) > 512) {
 				return false;
 			}
 			if(!$check_only) {

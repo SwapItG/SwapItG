@@ -1,7 +1,7 @@
 <?php
 	require_once(__DIR__ . "/php/restricted_page.php");
 	require_once(__DIR__ . "/php/userdata_get_set.php");
-
+	
 	if(isset($_POST["submit"]) && isset($_POST["name"]) && isset($_POST["profile_link"]) && isset($_POST["info"]) && isset($_FILES["image"])) {
 		setAll($_POST["name"], $_POST["profile_link"], $_POST["info"], "image");
 	}
