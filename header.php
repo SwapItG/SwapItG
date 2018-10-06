@@ -1,3 +1,7 @@
+<?PHP
+require_once(__DIR__ . "/php/userdata_get_set.php");
+require_once(__DIR__ . "/php/session.php");
+?>
 <!DOCTYPE html>
 <html>
 
@@ -15,7 +19,7 @@
     </style>
 </head>
 <body style="font-size:12;">
-    <nav style="position:inherit" class="navbar navbar-light navbar-expand-md fixed-top bg-dark navigation-clean navbar-inverse navbar-fixed-top">
+    <nav style="position:inherit" class="navbar navbar-light navbar-expand-md bg-dark fixed-top navigation-clean navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
           <a class="navbar-brand" href="https://swapitg.com" style="padding:0px;margin-left:0px;height:75px;">
            <img class="img-fluid" src="assets/img/SwapIT_Logo.png"></a>

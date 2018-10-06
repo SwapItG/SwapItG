@@ -55,6 +55,9 @@
 			$sth->bindParam(":verification_code", $verification_code, PDO::PARAM_STR);
 	        $sth->execute();
 
+			start_session();
+			//$_SESSION["reg_email"] = $email;
+			//$_SESSION["reg_password"] = $password;
 			return 0;
 		} else {
 			return 5;
@@ -117,12 +120,27 @@
 	//return 2 -> verification-code time passed or wrong email
 	//return 3 -> wrong password
 	//return 4 -> already validated
-	function firstlogin($email, $password, $verification_code) {
+	function firstlogin($email, $password, $verification_code, $session_check = true) {
 		global $pdo;
 
 		$pdo->query("DELETE FROM user WHERE verified = 0 AND TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, code_generation_time)) > 600");
 
-		if(empty($email) || is_array($email) || empty($password) || is_array($password) || empty($verification_code) || is_array($verification_code)) {
+		if(empty($verification_code) || is_array($verification_code)) {
+			return 1;
+		}
+
+		start_session();
+		if($session_check && !empty($_SESSION["reg_email"]) && !empty($_SESSION["reg_password"])) {
+			if(firstlogin($_SESSION["reg_email"], $_SESSION["reg_password"], $verification_code, false) == 0) {
+				unset($_SESSION["reg_email"]);
+				unset($_SESSION["reg_password"]);
+				return 0;
+			}
+			unset($_SESSION["reg_email"]);
+			unset($_SESSION["reg_password"]);
+		}
+
+		if(empty($email) || is_array($email) || empty($password) || is_array($password)) {
 			return 1;
 		}
 

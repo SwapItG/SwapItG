@@ -1,17 +1,19 @@
 <?php
-	function session_login($user_id) {
+	function start_session() {
 		if(session_id() == "") {
 			session_start();
 		}
+	}
+
+	function session_login($user_id) {
+		start_session();
 		session_regenerate_id();
 
 		$_SESSION["user_id"] = $user_id;
 	}
 
 	function session_logout() {
-		if(session_id() == "") {
-			session_start();
-		}
+		start_session();
 		session_unset();
 		session_regenerate_id();
 
@@ -19,9 +21,7 @@
 	}
 
 	function logedin() {
-		if(session_id() == "") {
-			session_start();
-		}
+		start_session();
 
 		if(isset($_SESSION["user_id"])) {
 			return $_SESSION["user_id"];
@@ -31,16 +31,12 @@
 	}
 
 	function setToken() {
-		if(session_id() == "") {
-			session_start();
-		}
+		start_session();
 		$_SESSION["csrf_token"] = hash("sha256", microtime() . (string)rand());
 	}
 
 	function getToken() {
-		if(session_id() == "") {
-			session_start();
-		}
+		start_session();
 		return $_SESSION["csrf_token"];
 	}
 

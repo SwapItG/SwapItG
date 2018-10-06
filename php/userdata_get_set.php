@@ -60,11 +60,11 @@
 		if(logedin()) {
 			global $pdo;
 
-			$sql = "SELECT steam_profile FROM user WHERE id = :id";
+			$sql = "SELECT steam_id FROM user WHERE id = :id";
 			$sth = $pdo->prepare($sql);
 			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
 			$sth->execute();
-			return $sth->fetch()["steam_profile"];
+			return $sth->fetch()["steam_id"];
 		} else {
 			return false;
 		}
@@ -80,9 +80,9 @@
 			}
 			if(!$check_only) {
 				global $pdo;
-				$sql = "UPDATE user SET steam_profile = :steam_profile  WHERE id = :id";
+				$sql = "UPDATE user SET steam_id = :steam_id  WHERE id = :id";
 				$sth = $pdo->prepare($sql);
-				$sth->bindParam(":steam_profile", htmlspecialchars($profile_link), PDO::PARAM_STR);
+				$sth->bindParam(":steam_id", htmlspecialchars($profile_link), PDO::PARAM_STR);
 				$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
 				$sth->execute();
 			}
@@ -100,7 +100,15 @@
 			$sth = $pdo->prepare($sql);
 			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
 			$sth->execute();
-			return "data:image/jpg;base64, " . base64_encode($sth->fetch()["image"]);
+			if($sth->rowCount() == 0) {
+				return false;
+			}
+			$image = $sth->fetch()["image"];
+			if(is_null($image)) {
+				return false;
+			}
+			$finfo = new finfo(FILEINFO_MIME_TYPE);
+			return "data:" . $finfo->buffer($image) . ";base64," . base64_encode($image);
 		} else {
 			return false;
 		}
@@ -122,7 +130,7 @@
 				return 2;
 			}
 
-			if(exif_imagetype($_FILES[$post_name]["tmp_name"]) != IMAGETYPE_JPEG) {
+			if(exif_imagetype($_FILES[$post_name]["tmp_name"]) != IMAGETYPE_JPEG && exif_imagetype($_FILES[$post_name]["tmp_name"]) != IMAGETYPE_PNG) {
 				return 3;
 			}
 

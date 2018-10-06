@@ -7,7 +7,7 @@ login($_POST["logEMail"],$_POST["logPassw"]);
 ?>
 
 <?php
-echo '<li style="" role="presentation"><a class="nav-link-correction navItemAlign" href="https://swapitg.com/" uk-scroll="offset:50">HOME</a></li>';
+echo '<li role="presentation"><a class="nav-link-correction navItemAlign" href="https://swapitg.com/">HOME</a></li>';
 if (empty(logedin())) {
   echo '<li role="presentation"><a class="nav-link-correction navItemAlign" href="registration.php" uk-scroll="offset:50">Register</a></li>';
   echo '<div id="loginContainer">
@@ -18,13 +18,13 @@ if (empty(logedin())) {
             </form>
         </div>';
 } else {
-  echo '<li class="nav-item" role="presentation">
-            <a class="navItemAlign" style="border-color:red" class="" uk-scroll="offset:50">
+    echo '<li class="nav-item" role="presentation">
+            <span class="nav-link-correction navItemAlign" style="border-color:red" class="" uk-scroll="offset:50">
                 <div id="profileCollapseMenu">
                     <ul style="list-style-type: none;">
-                        <li class="collapseMenuLinks"> new trade
+                        <li class="collapseMenuLinks"><a class="navSubLink" href="account.php">new trade</a></li>
                         </li>
-                        <li class="collapseMenuLinks"> account
+                        <li class="collapseMenuLinks"><a class="navSubLink" href="https://swapitg.com/account">account</a></li>
                         </li>
                         <li>
                             <form method="POST" action="https://swapitg.com/logout">
@@ -37,10 +37,13 @@ if (empty(logedin())) {
                 <span onclick="toggleUserMenu()">
                     <span id="uname">'.getName().'</span>
                     <span id="collapseArrow"> ▼</span>
-                </span>
-                <img id="profilePic" src="'if(getImage() == 0){echo("#");}else{echo (getImage())}'" />
-            </a>
-        </li>';
+                </span>';
+                if(getImage() == "data:image/jpg;base64,"){
+                  echo '<img id="profilePic" src="/assets/img/defaultPic.jpg" />';
+                }else {
+                  echo '<img id="profilePic" src="'.getImage().'" />';
+                }
+                echo '</span></li>';
 }
 ?>
 <html>
@@ -66,6 +69,16 @@ if (empty(logedin())) {
                 display:block;
                 display: flex;
                 align-items: center;
+                text-transform: uppercase;
+                font-weight:bold;
+                color:white !important;
+            }
+            .navSubLink {
+                color:white;
+                text-decoration:none;
+            }
+            .navSubLink:hover {
+                color:orange;
             }
             #loginContainer {
                 position:absolute;
@@ -113,7 +126,7 @@ if (empty(logedin())) {
                 cursor:pointer;
             }
             .collapseMenuLinks:hover {
-                color:orange;
+                color:orange !important;
             }
             .nav-link-correction:hover {
                 text-decoration: none !important;
