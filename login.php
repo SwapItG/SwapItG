@@ -7,9 +7,9 @@ login($_POST["logEMail"],$_POST["logPassw"]);
 ?>
 
 <?php
-echo '<li role="presentation"><a class="nav-link-correction navItemAlign" href="https://swapitg.com/">HOME</a></li>';
+echo '<li><a class="nav-link-correction navItemAlign" href="https://swapitg.com/">HOME</a></li>';
 if (empty(logedin())) {
-  echo '<li role="presentation"><a class="nav-link-correction navItemAlign" href="registration.php" uk-scroll="offset:50">Register</a></li>';
+  echo '<li><a class="nav-link-correction navItemAlign" href="registration.php">Register</a></li>';
   echo '<div id="loginContainer">
             <form method="POST" action="">
                 <input class="logInput" type="text" name="logEMail" placeholder="email" />
@@ -18,8 +18,8 @@ if (empty(logedin())) {
             </form>
         </div>';
 } else {
-    echo '<li class="nav-item" role="presentation">
-            <span class="nav-link-correction navItemAlign" style="border-color:red" class="" uk-scroll="offset:50">
+    echo '<li id="tempName">
+            <span class="nav-link-correction navItemAlign">
                 <div id="profileCollapseMenu">
                     <ul style="list-style-type: none;">
                         <li class="collapseMenuLinks"><a class="navSubLink" href="account.php">new trade</a></li>
@@ -130,6 +130,7 @@ if (empty(logedin())) {
             }
             .nav-link-correction:hover {
                 text-decoration: none !important;
+                color:orange;
             }
             @media only screen and (max-width: 767px) {
                 #profileCollapseMenu {
@@ -138,8 +139,11 @@ if (empty(logedin())) {
                     border-bottom-right-radius:8px;
                     z-index:3;
                 }
+                #tempName {
+                    margin-left:17px;
+                }
                 #loginContainer {
-                    top:175px;
+                    top:165px;
                     padding-left:10px;
                 }
                 li {
@@ -179,7 +183,6 @@ if (empty(logedin())) {
     var profileMenu = document.getElementById("profileCollapseMenu");
     var waitSecond = false;
     var toggleStatus;
-    console.log("toggleled");
 
     function showMenu() {
         if (toggleStatus == true) {

@@ -183,11 +183,8 @@
 		}
 	}
 
-	function setAll($name, $profile_link, $info, $image_post_name) {
+	function setAll($name, $profile_link, $info) {
 		if(setName($name, true) && setSteamProfile($profile_link, true) && setInfo($info, true)) {
-			if(setImage($image_post_name) > 1) {
-				return false;
-			}
 			setName($name);
 			setSteamProfile($profile_link);
 			setInfo($info);

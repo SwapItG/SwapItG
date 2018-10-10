@@ -1,4 +1,11 @@
-<?php include "../header.php" ?>
+<?php
+require_once(__DIR__ . "/../php/register_login.php");
+if (empty(logedin())) {
+    header('Location: https://swapitg.com');
+}
+
+include "../header.php";
+?>
 <html>
   <head>
     <meta charset="utf-8">
@@ -10,7 +17,7 @@
     --frame-size:100px;
     }
     div,p,ul {
-      border:solid;
+      border:none;
     }
     body {
       background-color:#151515;
@@ -29,7 +36,6 @@
         border-radius:3px;
     }
     #accountDisplay {
-
         width:700px;
         display: flex;
         flex-flow: row wrap;
@@ -52,7 +58,7 @@
       margin-top:15px;
     }
     #settingsDisplay {
-        
+
         width:20%;
         height:200px;
         float:right;
@@ -163,7 +169,7 @@
                   </ul>
               </div>
               <div id="settingsDisplay">
-                  <form method="POST" action=""><input type="submit" id="accountSettingsButton" value="⚙ EDIT PROFILE" /></form>
+                  <form method="POST" action="editAccount"><input type="submit" id="accountSettingsButton" value="⚙ EDIT PROFILE" /></form>
               </div>
           </div>
       </div>

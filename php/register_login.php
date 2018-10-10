@@ -28,7 +28,7 @@
 
 		$sql = "SELECT email FROM user WHERE email = :email";
         $sth = $pdo->prepare($sql);
-		$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
         $sth->execute();
 
 		if($sth->rowCount() != 0) {
@@ -49,7 +49,7 @@
 		if(mail($email, $subject, wordwrap($message, 70, "\r\n"), "From: $sender_name<$sender_email>\r\nContent-type: text/html; charset=utf-8", " -f " . $sender_email)) {
 			$sql = "INSERT INTO user (email, name, password, verification_code) VALUES (:email, :name, :password_hash, :verification_code)";
 	        $sth = $pdo->prepare($sql);
-			$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+			$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 			$sth->bindParam(":name", htmlspecialchars($name), PDO::PARAM_STR);
 			$sth->bindParam(":password_hash", $password_hash, PDO::PARAM_STR);
 			$sth->bindParam(":verification_code", $verification_code, PDO::PARAM_STR);
@@ -80,13 +80,13 @@
 
 		$sql = "SELECT name, verification_code FROM user WHERE email = :email AND verified = 0";
 		$sth = $pdo->prepare($sql);
-		$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
 			$sql = "SELECT id FROM user WHERE email = :email AND verified = 1";
 			$sth2 = $pdo->prepare($sql);
-			$sth2->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+			$sth2->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 			$sth2->execute();
 
 			if($sth2->rowCount() == 0) {
@@ -147,13 +147,13 @@
 		$sql = "SELECT id, password FROM user WHERE verification_code = :verification_code AND email = :email AND verified = 0";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":verification_code", $verification_code, PDO::PARAM_STR);
-		$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
 			$sql = "SELECT id FROM user WHERE email = :email AND verified = 1";
 			$sth2 = $pdo->prepare($sql);
-			$sth2->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+			$sth2->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 			$sth2->execute();
 
 			if($sth2->rowCount() == 0) {
@@ -190,7 +190,7 @@
 
 		$sql = "SELECT id, password FROM user WHERE email = :email AND verified = 1";
 		$sth = $pdo->prepare($sql);
-		$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -225,7 +225,7 @@
 		$sql = "SELECT id, password FROM user WHERE id = :id AND email = :email";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":id", $_SESSION["user_id"], PDO::PARAM_INT);
-		$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -258,7 +258,7 @@
 
 		$sql = "SELECT id FROM user WHERE email = :email AND verified = 1";
 		$sth = $pdo->prepare($sql);
-		$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -306,7 +306,7 @@
 		$sql = "SELECT id FROM user WHERE verification_code = :verification_code AND email = :email AND verified = 1";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":verification_code", $verification_code, PDO::PARAM_STR);
-		$sth->bindParam(":email", string_simplify($email), PDO::PARAM_STR);
+		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {

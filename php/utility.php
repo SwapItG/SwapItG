@@ -1,5 +1,5 @@
 <?php
-	function string_simplify($s) {
+	function mail_simplify($s) {
 		return strtolower(trim($s));
 	}
 
