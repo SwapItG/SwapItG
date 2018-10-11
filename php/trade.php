@@ -3,51 +3,88 @@
 	require_once(__DIR__ . "/session.php");
 
 	//item_offer/item_demand: array(array("name" => "dirt", "count" => "1", "info" => "block rare unique"), array(...), ...)
+	//return 0 -> worked
+	//return 1 -> not logedin
+	//return 2 -> some parameters are empty or the wrong type
+	//return 3 -> some strings are to long
+	//return 4 -> not allowed to create new item for this game
 	function create_trade($description, $game_name, $item_offer, $item_demand) {
+		//Check Data
 		if(!logedin()) {
-			return false;
+			return 1;
 		}
 		if(is_null($description) || is_array($description) || empty($game_name) || is_array($game_name) || empty($item_offer) || !is_array($item_offer) || empty($item_demand) || !is_array($item_demand)) {
-			return false;
+			return 2;
 		}
 		if(strlen($description) > 512) {
-			return false;
+			return 3;
 		}
 		$tmp_game_id = create_game($game_name, true);
 		for ($i=0; $i < count($item_offer); $i++) {
 			if(empty($item_offer[$i]) || !is_array($item_offer[$i])) {
-				return false;
+				return 2;
 			}
-			if(empty($item_offer[$i]["name"]) || is_array($item_offer[$i]["name"]) || empty($item_offer[$i]["count"]) || is_array($item_offer[$i]["count"]) || is_null($item_offer[$i]["info"]) || is_array($item_offer[$i]["info"])) {
-				return false;
+			if(empty($item_offer[$i]["name"]) || is_array($item_offer[$i]["name"]) || empty($item_offer[$i]["count"]) || !is_numeric($item_offer[$i]["count"]) || is_null($item_offer[$i]["info"]) || is_array($item_offer[$i]["info"])) {
+				return 2;
 			}
 			if($tmp_game_id != 0) {
 				if(create_item($item_offer[$i]["name"], $tmp_game_id, true) < 0) {
-					return false;
+					return 4;
 				}
 			}
 			if(strlen($item_offer[$i]["info"]) > 512) {
-				return false;
+				return 3;
 			}
 		}
 		for ($i=0; $i < count($item_demand); $i++) {
 			if(empty($item_demand[$i]) || !is_array($item_demand[$i])) {
-				return false;
+				return 2;
 			}
-			if(empty($item_demand[$i]["name"]) || is_array($item_demand[$i]["name"]) || empty($item_demand[$i]["count"]) || is_array($item_demand[$i]["count"]) || is_null($item_demand[$i]["info"]) || is_array($item_demand[$i]["info"])) {
-				return false;
+			if(empty($item_demand[$i]["name"]) || is_array($item_demand[$i]["name"]) || empty($item_demand[$i]["count"]) || !is_numeric($item_demand[$i]["count"]) || is_null($item_demand[$i]["info"]) || is_array($item_demand[$i]["info"])) {
+				return 2;
 			}
 			if($tmp_game_id != 0) {
 				if(create_item($item_demand[$i]["name"], $tmp_game_id, true) < 0) {
-					return false;
+					return 4;
 				}
 			}
 			if(strlen($item_demand[$i]["info"]) > 512) {
-				return false;
+				return 3;
 			}
 		}
-		//TODO: write data
-		//TODO: Test
+
+		//Write Data
+		$game_id = create_game($game_name);
+		global $pdo;
+		$sql = "INSERT INTO trade_proposal (user_fk, description, game_fk) VALUES (:user_id, :description, :game_id)";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->bindParam(":description", htmlspecialchars($description), PDO::PARAM_STR);
+		$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
+		$sth->execute();
+		$sql = "SELECT LAST_INSERT_ID() AS id";
+		$sth = $pdo->prepare($sql);
+		$sth->execute();
+		$trade_id = $sth->fetch()["id"];
+		for ($i=0; $i < count($item_offer); $i++) {
+			$sql = "INSERT INTO item_offer (trade_fk, item_fk, count, info) VALUES (:trade_id, :item_id, :count, :info)";
+			$sth = $pdo->prepare($sql);
+			$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
+			$sth->bindParam(":item_id", create_item($item_offer[$i]["name"], $game_id), PDO::PARAM_INT);
+			$sth->bindParam(":count", intval($item_offer[$i]["count"]), PDO::PARAM_INT);
+			$sth->bindParam(":info", $item_offer[$i]["info"], PDO::PARAM_STR);
+			$sth->execute();
+		}
+		for ($i=0; $i < count($item_demand); $i++) {
+			$sql = "INSERT INTO item_demand (trade_fk, item_fk, count, info) VALUES (:trade_id, :item_id, :count, :info)";
+			$sth = $pdo->prepare($sql);
+			$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
+			$sth->bindParam(":item_id", create_item($item_demand[$i]["name"], $game_id), PDO::PARAM_INT);
+			$sth->bindParam(":count", intval($item_demand[$i]["count"]), PDO::PARAM_INT);
+			$sth->bindParam(":info", $item_demand[$i]["info"], PDO::PARAM_STR);
+			$sth->execute();
+		}
+		return 0;
 	}
 
 	//return -1 -> not logedin
@@ -133,6 +170,101 @@
 			return $sth->fetch()["id"];
 		} else {
 			return $sth->fetch()["id"];
+		}
+	}
+
+	//return 0 -> worked
+	//return 1 -> not logedin
+	//return 2 -> trade not found
+	function delete_trade($trade_id) {
+		if(!logedin()) {
+			return 1;
+		}
+
+		global $pdo;
+		$sql = "SELECT id FROM trade_proposal WHERE id = :id AND user_fk = :user_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":id", $trade_id, PDO::PARAM_INT);
+		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->execute();
+
+		if($sth->rowCount() == 0) {
+			return 2;
+		}
+
+		$sql = "DELETE FROM item_offer WHERE trade_fk = :trade_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
+		$sth->execute();
+		$sql = "DELETE FROM item_demand WHERE trade_fk = :trade_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
+		$sth->execute();
+		$sql = "DELETE FROM trade_proposal WHERE id = :trade_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
+		$sth->execute();
+		return 0;
+	}
+
+	function getTrades() {
+		if(!logedin()) {
+			return false;
+		}
+
+		global $pdo;
+		$sql = "SELECT id FROM trade_proposal WHERE user_fk = :user_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->execute();
+		$result = $sth->fetchAll(PDO::FETCH_NUM);
+		$output = array();
+		for ($i=0; $i < count($result); $i++) {
+			$output[$i] = (int)$result[$i][0];
+		}
+		return $output;
+	}
+
+	//item_offer/item_demand: array(array("name" => "dirt", "count" => "1", "info" => "block rare unique"), array(...), ...)
+	//return 0 -> worked
+	//return 1 -> not logedin
+	//return 2 -> some parameters are empty or the wrong type
+	//return 3 -> some strings are to long
+	//return 4 -> not allowed to create new item for this game
+	//return 5 -> trade not found
+	function edit_trade($old_trade_id, $description, $game_name, $item_offer, $item_demand) {
+		if(!logedin()) {
+			return 1;
+		}
+
+		global $pdo;
+		$sql = "SELECT id FROM trade_proposal WHERE id = :id AND user_fk = :user_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":id", $old_trade_id, PDO::PARAM_INT);
+		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->execute();
+
+		if($sth->rowCount() == 0) {
+			return 5;
+		}
+
+		$error_code = create_trade($description, $game_name, $item_offer, $item_demand);
+		if($error_code == 0) {
+			$sql = "DELETE FROM item_offer WHERE trade_fk = :trade_id";
+			$sth = $pdo->prepare($sql);
+			$sth->bindParam(":trade_id", $old_trade_id, PDO::PARAM_INT);
+			$sth->execute();
+			$sql = "DELETE FROM item_demand WHERE trade_fk = :trade_id";
+			$sth = $pdo->prepare($sql);
+			$sth->bindParam(":trade_id", $old_trade_id, PDO::PARAM_INT);
+			$sth->execute();
+			$sql = "DELETE FROM trade_proposal WHERE id = :trade_id";
+			$sth = $pdo->prepare($sql);
+			$sth->bindParam(":trade_id", $old_trade_id, PDO::PARAM_INT);
+			$sth->execute();
+			return 0;
+		} else {
+			return $error_code;
 		}
 	}
 ?>

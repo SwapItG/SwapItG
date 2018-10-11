@@ -12,6 +12,9 @@
             border-width:1px;
             border:none;
         }
+        body {
+            background-color:var(--middle-black) !important;
+        }
         .contentUserPostHeaderTable {
             border-collapse:collapse;
             border-width:1px;
@@ -340,7 +343,7 @@ function updateAutocomplete(slogan,param) {
           var t = document.createTextNode(selectedList[i]);
           l.appendChild(t);
           l.className = "autoSuggest";
-          l.onclick = function applayAuto() {
+          l.onclick = function applyAuto() {
               var fillText = "";
               autocompleteContainer.style.display = "inherit";
               fillText = this.innerHTML.indexOf("<");

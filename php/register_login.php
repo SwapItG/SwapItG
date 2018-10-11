@@ -2,6 +2,7 @@
 	require_once(__DIR__ . "/db_connect.php");
 	require_once(__DIR__ . "/utility.php");
 	require_once(__DIR__ . "/session.php");
+	require_once(__DIR__ . "/trade.php");
 
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
@@ -235,6 +236,11 @@
 		$id_password = $sth->fetch();
 		if(!password_verify($password, $id_password["password"])) {
 			return 4;
+		}
+
+		$trades = getTrades();
+		for ($i=0; $i < count($trades); $i++) {
+			delete_trade($trades[$i]);
 		}
 
 		$sql = "DELETE FROM user WHERE id = :id";

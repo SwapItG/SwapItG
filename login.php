@@ -13,7 +13,7 @@ if (empty(logedin())) {
   echo '<div id="loginContainer">
             <form method="POST" action="">
                 <input class="logInput" type="text" name="logEMail" placeholder="email" />
-                <input class="logInput" type="text" name="logPassw" placeholder="password" />
+                <input class="logInput" type="password" name="logPassw" placeholder="password" />
                 <input id="logSubmit" type="submit" name="submitLog" value="submit" />
             </form>
         </div>';
@@ -48,9 +48,26 @@ if (empty(logedin())) {
 ?>
 <html>
     <head>
+    <link rel="stylesheet" href="assets/css/global_var.css">
         <style>
         a,li,ul{
           border:none;
+        }
+        ::-webkit-input-placeholder { /* Chrome */
+          color: var(--skyblue);
+          opacity: 1;
+        }
+        :-ms-input-placeholder { /* IE 10+ */
+          color: var(--skyblue);
+          opacity: 1;
+        }
+        ::-moz-placeholder { /* Firefox 19+ */
+          color: var(--skyblue);
+          opacity: 1;
+        }
+        :-moz-placeholder { /* Firefox 4 - 18 */
+          color: var(--skyblue);
+          opacity: 1;
         }
             :root {
             --header-height:75px;
@@ -63,6 +80,19 @@ if (empty(logedin())) {
                 height:var(--form-height);
                 width:var(--form-input-width);
                 font-size:12px;
+                border:none;
+                border-bottom:solid;
+                border-bottom-color:#999;
+                background-color:rgba(0,0,0,0);
+                border-width:1px;
+                color:white;
+                transition:0.1s;
+                padding-left:5px;
+                transition:0.1s;
+            }
+            .logInput:hover {
+                border-color:var(--skyblue);
+                border-bottom-color:var(--lightweight-orange);
             }
             .navItemAlign {
                 height:100%;
@@ -82,7 +112,7 @@ if (empty(logedin())) {
             }
             #loginContainer {
                 position:absolute;
-                top:calc(var(--header-height) - (var(--form-height)/2));
+                top:calc(var(--header-height) - (var(--form-height)/2) * 1.2);
                 padding-right:45px;
                 width:100%;
                 left:0px;
@@ -93,6 +123,30 @@ if (empty(logedin())) {
                 width:var(--form-submit-width);
                 font-size:12px;
                 width:75px;
+                border:solid;
+                border-color:rgba(255,255,255,1);
+                background-color:rgba(255,255,255,0);
+                color:white;
+                font-family:sans-serif;
+                transition:0.1s;
+                border-radius:4px;
+                border-width:1px;
+            }
+            #logSubmit:hover {
+              cursor:pointer;
+              border-color:rgb(185,185,185);
+              border-width:2px;
+              border-top-color:rgba(0,0,0,0);
+              border-left-color:rgba(0,0,0,0);
+              background-color:white;
+              color:black;
+            }
+            #logSubmit:active {
+              background-color:var(--strong-orange);
+              color:white;
+              border-color:rgba(0,0,0,0);
+              font-weight:bold;
+              border-width:1px;
             }
             #profileCollapseMenu {
                 box-shadow:0px 4px 3px rgba(0,0,0,0.5);
@@ -128,9 +182,12 @@ if (empty(logedin())) {
             .collapseMenuLinks:hover {
                 color:orange !important;
             }
+            .nav-link-correction {
+              color:var(--lightweight-orange) !important;
+            }
             .nav-link-correction:hover {
                 text-decoration: none !important;
-                color:orange;
+                color:white !important;
             }
             @media only screen and (max-width: 767px) {
                 #profileCollapseMenu {
