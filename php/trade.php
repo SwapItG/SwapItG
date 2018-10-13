@@ -267,4 +267,74 @@
 			return $error_code;
 		}
 	}
+
+	function getGameName($game_id) {
+		global $pdo;
+		$sql = "SELECT name FROM game WHERE id = :game_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
+		$sth->execute();
+
+		if($sth->rowCount() == 0) {
+			return false;
+		}
+
+		return $sth->fetch()["name"];
+	}
+
+	function getGameIcon($game_id) {
+		global $pdo;
+		$sql = "SELECT icon_path FROM game WHERE id = :game_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
+		$sth->execute();
+
+		if($sth->rowCount() == 0) {
+			return false;
+		}
+
+		return $sth->fetch()["icon_path"];
+	}
+
+	function getItemName($item_id) {
+		global $pdo;
+		$sql = "SELECT name FROM item WHERE id = :item_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":item_id", $item_id, PDO::PARAM_INT);
+		$sth->execute();
+
+		if($sth->rowCount() == 0) {
+			return false;
+		}
+
+		return $sth->fetch()["name"];
+	}
+
+	function getTradeData($trade_id) {
+		$output = array();
+		global $pdo;
+
+		$sql = "SELECT user_fk AS user_id, description, creation_time, game_fk AS game_id, game.name AS game_name, game.icon_path AS icon_path FROM trade_proposal JOIN game ON game.id = trade_proposal.game_fk WHERE trade_proposal.id = :id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":id", $trade_id, PDO::PARAM_INT);
+		$sth->execute();
+		if($sth->rowCount() == 0) {
+			return false;
+		}
+		$output = array_merge($output, $sth->fetch(PDO::FETCH_ASSOC));
+
+		$sql = "SELECT item_fk AS item_id, item.name AS name, count, info FROM item_offer JOIN item ON item_offer.item_fk = item.id WHERE trade_fk = :trade_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
+		$sth->execute();
+		$output["item_offer"] = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+		$sql = "SELECT item_fk AS item_id, item.name AS name, count, info FROM item_demand JOIN item ON item_demand.item_fk = item.id WHERE trade_fk = :trade_id";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
+		$sth->execute();
+		$output["item_demand"] = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+		return $output;
+	}
 ?>

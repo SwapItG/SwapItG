@@ -22,14 +22,17 @@
 		}
 	}
 
-	function getName() {
-		if(logedin()) {
+	function getName($user_id = -1) {
+		if(logedin() || $user_id != -1) {
 			global $pdo;
 
 			$sql = "SELECT name FROM user WHERE id = :id";
 			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+			$sth->bindValue(":id", ($user_id == -1) ? logedin() : $user_id, PDO::PARAM_INT);
 			$sth->execute();
+			if($sth->rowCount() == 0) {
+				return false;
+			}
 			return $sth->fetch()["name"];
 		} else {
 			return false;
@@ -56,14 +59,17 @@
 		}
 	}
 
-	function getSteamProfile() {
-		if(logedin()) {
+	function getSteamProfile($user_id = -1) {
+		if(logedin() || $user_id != -1) {
 			global $pdo;
 
 			$sql = "SELECT steam_id FROM user WHERE id = :id";
 			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+			$sth->bindValue(":id", ($user_id == -1) ? logedin() : $user_id, PDO::PARAM_INT);
 			$sth->execute();
+			if($sth->rowCount() == 0) {
+				return false;
+			}
 			return $sth->fetch()["steam_id"];
 		} else {
 			return false;
@@ -92,13 +98,13 @@
 		}
 	}
 
-	function getImage() {
-		if(logedin()) {
+	function getImage($user_id = -1) {
+		if(logedin() || $user_id != -1) {
 			global $pdo;
 
 			$sql = "SELECT image FROM user WHERE id = :id";
 			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+			$sth->bindValue(":id", ($user_id == -1) ? logedin() : $user_id, PDO::PARAM_INT);
 			$sth->execute();
 			if($sth->rowCount() == 0) {
 				return false;
@@ -147,14 +153,17 @@
 		}
 	}
 
-	function getInfo() {
-		if(logedin()) {
+	function getInfo($user_id = -1) {
+		if(logedin() || $user_id != -1) {
 			global $pdo;
 
 			$sql = "SELECT info FROM user WHERE id = :id";
 			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+			$sth->bindValue(":id", ($user_id == -1) ? logedin() : $user_id, PDO::PARAM_INT);
 			$sth->execute();
+			if($sth->rowCount() == 0) {
+				return false;
+			}
 			return $sth->fetch()["info"];
 		} else {
 			return false;
