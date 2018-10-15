@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Swapit</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/Filter.css">
+
+  
     <style>
         div td {
             border-width:1px;
@@ -69,32 +70,40 @@
             width: 100%;
         }
         .searchbar ,.searchInput {
-          height:25px !important;
+          height:38px !important;
+          border-radius:0px !important;
+          box-shadow: 0px 0px 0px rgba(0,0,0,0);
         }
+
         .searchButton {
-          height:25px !important;
+          height:38px !important;
+          width:75px;
+          border:none;
+        }
+        .searchButton:hover {
+          cursor:pointer;
+          background-color:var(--lightweight-orange);
+          transition:0.1s;
         }
         #autocompleteContainer {
           display:none;
           position:absolute;
           background-color:#333;
-          margin-top:25px;
+          margin-top:40px;
           padding-left:25px;
           color:white;
           max-height:350px;
-          height:35px;
           overflow-y: scroll;
         }
         .autoSuggest {
           cursor:pointer;
-          width:100%;
           height:35px;
           padding-left:20px;
           transition:0.1s;
           padding-right:25px;
-          min-width:200px;
           padding-top:5px;
           white-space: nowrap;
+          min-width:270px;
         }
         .autoSuggest:hover {
           color:orange;
@@ -130,7 +139,7 @@
           <td style="width:300px">
               <form method="POST" action="">
                 <div class="input-group searchbar">
-                  <input onfocus="focusAutoComplete(this)" onfocusout="defocusAutoComplete(this)" onClick="this.select();" oninput="updateAutocomplete(this.value)" id="searchInputBar" class="form-control searchInput" type="text" placeholder="Select your game..." />
+                  <input autocomplete="off" onfocus="focusAutoComplete(this)" onfocusout="defocusAutoComplete(this)" onClick="this.select();" oninput="updateAutocomplete(this.value)" id="searchInputBar" class="form-control searchInput" type="text" placeholder="Select your game..." />
                   <input class="searchButton" type="submit" value="search" />
                   <div id="autocompleteContainer">
                       <ul id="autocompleteList">
@@ -272,6 +281,7 @@
           </ul>
       </nav>
     </div>
+    <a style="color:black;background-color:lightblue" id="ajaxGamesContainer"></a>
     <?php include "footer.php" ?>
 </body>
 </html>
@@ -296,14 +306,26 @@
 </script>
 <script type="text/javascript">
 var gamesearchInput = document.getElementById("searchInputBar");
-var autocompleteList = document.getElementById("autocompleteList");
 var autocompleteContainer = document.getElementById("autocompleteContainer");
-var gamelist = new Array("","RUST#","ROCKET LEAGUE#","MINECRAFT#","LEAGUE OF LEGENDS#","DOTA II","STEAM CARDS","PORTAL", "PORTAL II", "RAINBOW SIX SIEGE", "RATCHET AND CLANK", "RAYMAN", "REALM ROYALE", "RED DEAD REDEMPTION II", "RESIDENT EVIL VII", "Rz#1","Rz#2","Rz#3","Rz#4","Rz#5","rz#6");
-var selectedList = new Array();
-var selectedListCounter = 0;
-var isofficial = "";
+var gameList = new Array(<?php
+$api_url = 'https://swapitg.com/getGames';
+$json = json_decode(file_get_contents($api_url), true);
+for ($i=0;$i < count($json);$i++) {
+    echo "'".$json[$i]["name"]."',";
+}?>);
+ var gameListPic = new Array(<?php
+ for ($i=0;$i < count($json);$i++) {
+    if (empty($json[$i]["icon_path"])) {
+        $json[$i]["icon_path"] = "empty";
+    }
+     echo "'".$json[$i]["icon_path"]."',";
+ }?>);
+var selectedGameList = new Array()
+var selectedGameListPic = new Array();
+var selectedGameListCounter;
 
 function updateAutocomplete(slogan,param) {
+
     if(slogan == "" && param != "all") {
         autocompleteList.innerHTML = "";
         autocompleteContainer.style.display = "none";
@@ -314,66 +336,52 @@ function updateAutocomplete(slogan,param) {
     autocompleteList.innerHTML = "";
     autocompleteContainer.style.display = "inherit";
     slogan = slogan.toLowerCase();
-    selectedList = [];
-    selectedListCounter = -1;
-    for(i=0;i<gamelist.length;i++) {
-        //console.log((gamelist[i].substr(0,sloganlength)));
-        if(slogan == (gamelist[i].substr(0,sloganlength).toLowerCase()) && param != "all") {
-            selectedListCounter++;
-            selectedList[selectedListCounter] = gamelist[i];
+    selectedGameList = [];  // sorgt dafür, dass bei jedem Neuaufruf die Liste wieder geleert ist
+    selectedGameListCounter = -1; // verhindert dass eine zusätzliche leere Zeile entsteht
+    for(i=0;i<gameList.length;i++) {
+        if(slogan == (gameList[i].substr(0,sloganlength).toLowerCase()) && param != "all") {
+            selectedGameListCounter++;
+            selectedGameList[selectedGameListCounter] = gameList[i];
+            selectedGameListPic[selectedGameListCounter] = gameListPic[i];
             autocompleteContainer.style.width = "auto";
-        } else {
-          if (param == "all") {
-            console.log("##");
-            selectedListCounter++;
-            selectedList[selectedListCounter] = gamelist[i];
-            autocompleteContainer.style.width = "auto";
-          }
-          autocompleteContainer.style.width = "250px";
-          autocompleteContainer.style.height = "25px";
         }
     }
-    selectedList.sort();
-    console.log(selectedList);
-    for(i=0;i<gamelist.length;i++) {
-      if(selectedList[i] != "" && selectedList[i] != null) {
-          isofficial = "";
-          isofficial = selectedList[i].slice(-1);
+    selectedGameList.sort();
+    for(i=0;i<gameList.length;i++) {
+      if(selectedGameList[i] != "" && selectedGameList[i] != null) {
           var l = document.createElement("LI");
-          var t = document.createTextNode(selectedList[i]);
+          var t = document.createTextNode(selectedGameList[i]);
           l.appendChild(t);
           l.className = "autoSuggest";
           l.onclick = function applyAuto() {
               var fillText = "";
               autocompleteContainer.style.display = "inherit";
-              fillText = this.innerHTML.indexOf("<");
-              fillText = this.innerHTML.substr(0,fillText+999);
-              gamesearchInput.value = this.innerHTML;
-              updateAutocomplete(this.innerHTML);
+              fillText = this.innerHTML.split("<");
+              fillText = fillText[0];
+              gamesearchInput.value = fillText;
+              updateAutocomplete(fillText);
               autocompleteContainer.style.display = "none";
           };
           autocompleteList.appendChild(l);
-          if (isofficial == "#") {
-            var img = document.createElement("IMG");
-            selectedList[i] = selectedList[i].slice(0,selectedList[i].length - 1);
-            l.innerHTML = selectedList[i];
-            l.appendChild(img);
-            img.className = "autoSuggestIMG";
-            img.src = "assets/img/gameicons/" + selectedList[i].toLowerCase() + ".jpg";
-          }
-          autocompleteContainer.style.height = (selectedList.length * 40) + "px";
+          var img = document.createElement("IMG");
+          l.innerHTML = selectedGameList[i];
+          l.appendChild(img);
+          img.className = "autoSuggestIMG";
+          img.alt = "";
+          img.src = selectedGameListPic[i];
+          autocompleteContainer.style.height = (selectedGameList.length * 40) + "px";
       } else {
         return 0;
       }
     }
-}
 
+}
 function defocusAutoComplete(object) {
     autocompleteContainer.style.visibility = "hidden";
 }
-
 function focusAutoComplete(object) {
         autocompleteContainer.style.visibility = "visible";
         autocompleteContainer.style.display = "inherit";
+        document.getElementById("autocompleteList").style.width = "300px";
 }
 </script>

@@ -9,11 +9,7 @@ require_once(__DIR__ . "/php/session.php");
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="17Ia-Aotx4mQG7ayi2W9l97hAJcgF8GB9FCrU34zdA0" />
-    <link rel="shortcut icon" href="/assets/img/icons/swapitg_icon.png" />
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/css/dh-navbar-inverse.css">
-    <link rel="stylesheet" href="assets/css/global_var.css">
+
     <style>
         .navbar {
             box-shadow: 0px 3px 3px rgba(0,0,0,0.5);

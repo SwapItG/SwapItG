@@ -207,22 +207,17 @@
 		return 0;
 	}
 
-	function getTrades() {
-		if(!logedin()) {
+	function getTrades($user_id = -1) {
+		if(logedin() || $user_id != -1) {
+			global $pdo;
+			$sql = "SELECT id FROM trade_proposal WHERE user_fk = :user_id";
+			$sth = $pdo->prepare($sql);
+			$sth->bindValue(":user_id", ($user_id == -1) ? logedin() : $user_id, PDO::PARAM_INT);
+			$sth->execute();
+			return $sth->fetchAll(PDO::FETCH_COLUMN);
+		} else {
 			return false;
 		}
-
-		global $pdo;
-		$sql = "SELECT id FROM trade_proposal WHERE user_fk = :user_id";
-		$sth = $pdo->prepare($sql);
-		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
-		$sth->execute();
-		$result = $sth->fetchAll(PDO::FETCH_NUM);
-		$output = array();
-		for ($i=0; $i < count($result); $i++) {
-			$output[$i] = (int)$result[$i][0];
-		}
-		return $output;
 	}
 
 	//item_offer/item_demand: array(array("name" => "dirt", "count" => "1", "info" => "block rare unique"), array(...), ...)
@@ -336,5 +331,48 @@
 		$output["item_demand"] = $sth->fetchAll(PDO::FETCH_ASSOC);
 
 		return $output;
+	}
+
+	//TODO search parameter
+	// returns array("forward" => "forward_linkdata", "backward" => "backward_linkdata", "list" => array(trade_ids))
+	function list_trades($trades_per_page, $linkdata) {
+		global $pdo;
+		if($linkdata == 0) {
+			$sql = "SELECT id FROM trade_proposal ORDER BY id DESC LIMIT :amount";
+			$sth = $pdo->prepare($sql);
+			$sth->bindValue(":amount", $trades_per_page + 1, PDO::PARAM_INT);
+			$sth->execute();
+			$output = $sth->fetchAll(PDO::FETCH_COLUMN);
+
+			$forward_linkdata = (count($output) > $trades_per_page) ? $output[$trades_per_page - 1] : false;
+			$backward_linkdata = false;
+			return array("forward" => $forward_linkdata, "backward" => $backward_linkdata, "list" => array_slice($output, 0, $trades_per_page));
+		} else if($linkdata > 0) {
+			$sql = "SELECT id FROM trade_proposal WHERE id < :linkdata ORDER BY id DESC LIMIT :amount";
+			$sth = $pdo->prepare($sql);
+			$sth->bindValue(":linkdata", $linkdata, PDO::PARAM_INT);
+			$sth->bindValue(":amount", $trades_per_page + 1, PDO::PARAM_INT);
+			$sth->execute();
+			$output = $sth->fetchAll(PDO::FETCH_COLUMN);
+
+			$forward_linkdata = (count($output) > $trades_per_page) ? $output[$trades_per_page - 1] : false;
+			$sql = "SELECT id FROM trade_proposal WHERE id >= :linkdata ORDER BY id ASC LIMIT :amount";
+			$sth2 = $pdo->prepare($sql);
+			$sth2->bindValue(":linkdata", $linkdata, PDO::PARAM_INT);
+			$sth2->bindValue(":amount", $trades_per_page + 1, PDO::PARAM_INT);
+			$sth2->execute();
+			$backward_linkdata = (count($sth2->fetchAll(PDO::FETCH_NUM)) > $trades_per_page) ? $output[0] : 0;
+			return array("forward" => $forward_linkdata, "backward" => -$backward_linkdata, "list" => array_slice($output, 0, $trades_per_page));
+		} else {
+			$sql = "SELECT id FROM trade_proposal WHERE id > :linkdata ORDER BY id ASC LIMIT :amount";
+			$sth = $pdo->prepare($sql);
+			$sth->bindValue(":linkdata", -$linkdata, PDO::PARAM_INT);
+			$sth->bindValue(":amount", $trades_per_page * 2 + 1, PDO::PARAM_INT);
+			$sth->execute();
+			$output = $sth->fetchAll(PDO::FETCH_COLUMN);
+			$forward_linkdata = $output[0];
+			$backward_linkdata = (count($output) > ($trades_per_page * 2)) ? $output[$trades_per_page - 1] : 0;
+			return array("forward" => $forward_linkdata, "backward" => -$backward_linkdata, "list" => array_reverse(array_slice($output, 0, $trades_per_page)));
+		}
 	}
 ?>
