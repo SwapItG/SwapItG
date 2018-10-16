@@ -18,7 +18,7 @@ require_once(__DIR__ . "/../php/session.php");
       unset($_POST);
   }
 ?>
-<?php include "../header.php" ?>
+<?php include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php") ?>
 <html>
   <head>
     <meta charset="utf-8">
@@ -170,7 +170,7 @@ require_once(__DIR__ . "/../php/session.php");
                     <a id="changepassword">change</a>
                 </div>
                 <div class="accountTopic">Picture:</div>
-                <iframe id="accountPicIframe" class="accountEdit" src="../editAccountPicture.php" scrolling="no"></iframe>
+                <iframe id="accountPicIframe" class="accountEdit" src="/pages/source/editAccountPicture.php" scrolling="no"></iframe>
                 <div class="accountTopic">Description:</div>
                 <div class="accountEdit" id="accountInfo">
                     <textarea placeholder="your personal impressum" id="accountInfoArea" name="info"><? echo getInfo() ?></textarea>

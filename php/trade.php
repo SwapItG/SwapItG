@@ -335,11 +335,24 @@
 
 	//TODO search parameter
 	// returns array("forward" => "forward_linkdata", "backward" => "backward_linkdata", "list" => array(trade_ids))
-	function list_trades($trades_per_page, $linkdata) {
+	function list_trades($trades_per_page, $linkdata, $game_id, $item_offer_name, $item_demand_name) {
+		if(empty($item_offer_name) || is_array($item_offer_name)) {
+			$item_offer_name = null;
+		}
+		if(empty($item_demand_name) || is_array($item_demand_name)) {
+			$item_demand_name = null;
+		}
+
+		$sql_from = "trade_proposal LEFT JOIN item_offer ON trade_proposal.id = item_offer.trade_fk LEFT JOIN item_demand ON trade_proposal.id = item_demand.trade_fk JOIN item AS item_offer_item ON item_offer.item_fk = item_offer_item.id JOIN item AS item_demand_item ON item_demand.item_fk = item_demand_item.id";
+		$sql_where = "AND (:item_offer_name IS NULL OR REPLACE(item_offer_item.name, \" \", \"\") LIKE REPLACE(:item_offer_name, \" \", \"\")) AND (:item_demand_name IS NULL OR REPLACE(item_demand_item.name, \" \", \"\") LIKE REPLACE(:item_demand_name, \" \", \"\"))";
+
 		global $pdo;
 		if($linkdata == 0) {
-			$sql = "SELECT id FROM trade_proposal ORDER BY id DESC LIMIT :amount";
+			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.game_fk = :game_id $sql_where ORDER BY trade_proposal.id DESC LIMIT :amount";
 			$sth = $pdo->prepare($sql);
+			$sth->bindValue(":game_id", $game_id, PDO::PARAM_INT);
+			$sth->bindValue(":item_offer_name", "%$item_offer_name%", PDO::PARAM_STR);
+			$sth->bindValue(":item_demand_name", "%$item_demand_name%", PDO::PARAM_STR);
 			$sth->bindValue(":amount", $trades_per_page + 1, PDO::PARAM_INT);
 			$sth->execute();
 			$output = $sth->fetchAll(PDO::FETCH_COLUMN);
@@ -348,25 +361,34 @@
 			$backward_linkdata = false;
 			return array("forward" => $forward_linkdata, "backward" => $backward_linkdata, "list" => array_slice($output, 0, $trades_per_page));
 		} else if($linkdata > 0) {
-			$sql = "SELECT id FROM trade_proposal WHERE id < :linkdata ORDER BY id DESC LIMIT :amount";
+			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.id < :linkdata AND trade_proposal.game_fk = :game_id $sql_where ORDER BY trade_proposal.id DESC LIMIT :amount";
 			$sth = $pdo->prepare($sql);
 			$sth->bindValue(":linkdata", $linkdata, PDO::PARAM_INT);
+			$sth->bindValue(":game_id", $game_id, PDO::PARAM_INT);
+			$sth->bindValue(":item_offer_name", "%$item_offer_name%", PDO::PARAM_STR);
+			$sth->bindValue(":item_demand_name", "%$item_demand_name%", PDO::PARAM_STR);
 			$sth->bindValue(":amount", $trades_per_page + 1, PDO::PARAM_INT);
 			$sth->execute();
 			$output = $sth->fetchAll(PDO::FETCH_COLUMN);
 
 			$forward_linkdata = (count($output) > $trades_per_page) ? $output[$trades_per_page - 1] : false;
-			$sql = "SELECT id FROM trade_proposal WHERE id >= :linkdata ORDER BY id ASC LIMIT :amount";
+			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.id >= :linkdata AND trade_proposal.game_fk = :game_id $sql_where ORDER BY trade_proposal.id ASC LIMIT :amount";
 			$sth2 = $pdo->prepare($sql);
 			$sth2->bindValue(":linkdata", $linkdata, PDO::PARAM_INT);
+			$sth2->bindValue(":game_id", $game_id, PDO::PARAM_INT);
+			$sth2->bindValue(":item_offer_name", "%$item_offer_name%", PDO::PARAM_STR);
+			$sth2->bindValue(":item_demand_name", "%$item_demand_name%", PDO::PARAM_STR);
 			$sth2->bindValue(":amount", $trades_per_page + 1, PDO::PARAM_INT);
 			$sth2->execute();
 			$backward_linkdata = (count($sth2->fetchAll(PDO::FETCH_NUM)) > $trades_per_page) ? $output[0] : 0;
 			return array("forward" => $forward_linkdata, "backward" => -$backward_linkdata, "list" => array_slice($output, 0, $trades_per_page));
 		} else {
-			$sql = "SELECT id FROM trade_proposal WHERE id > :linkdata ORDER BY id ASC LIMIT :amount";
+			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.id > :linkdata AND trade_proposal.game_fk = :game_id $sql_where ORDER BY trade_proposal.id ASC LIMIT :amount";
 			$sth = $pdo->prepare($sql);
 			$sth->bindValue(":linkdata", -$linkdata, PDO::PARAM_INT);
+			$sth->bindValue(":game_id", $game_id, PDO::PARAM_INT);
+			$sth->bindValue(":item_offer_name", "%$item_offer_name%", PDO::PARAM_STR);
+			$sth->bindValue(":item_demand_name", "%$item_demand_name%", PDO::PARAM_STR);
 			$sth->bindValue(":amount", $trades_per_page * 2 + 1, PDO::PARAM_INT);
 			$sth->execute();
 			$output = $sth->fetchAll(PDO::FETCH_COLUMN);

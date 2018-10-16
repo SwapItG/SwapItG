@@ -1,4 +1,4 @@
-<?php include "header.php" ?>
+<?php include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php") ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Swapit</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-
-  
+    <link rel="stylesheet" href="assets/css/Filter.css">
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
     <style>
         div td {
             border-width:1px;
@@ -74,7 +74,12 @@
           border-radius:0px !important;
           box-shadow: 0px 0px 0px rgba(0,0,0,0);
         }
-
+        .searchInput:hover {
+          background-color:#CCC;
+        }
+        .searchbar:focus,.searchInput:focus {
+          color:var(--strong-orange) !important;
+        }
         .searchButton {
           height:38px !important;
           width:75px;
@@ -117,7 +122,12 @@
         }
         .autoSuggestIMG {
           width:18px;
-          margin-left:25px;
+          margin-left:5px;
+        }
+        #loadScriptIMG {
+          position: relative;
+          width:35px;
+          display:none;
         }
         @media only screen and (max-width: 767px) {
             #autocompleteContainer {
@@ -127,7 +137,7 @@
           }
     </style>
 </head>
-<body>
+<body id="body">
     <!-- Placeholder -->
     <div style="height:15vh">
     </div>
@@ -139,8 +149,9 @@
           <td style="width:300px">
               <form method="POST" action="">
                 <div class="input-group searchbar">
-                  <input autocomplete="off" onfocus="focusAutoComplete(this)" onfocusout="defocusAutoComplete(this)" onClick="this.select();" oninput="updateAutocomplete(this.value)" id="searchInputBar" class="form-control searchInput" type="text" placeholder="Select your game..." />
+                  <input autocomplete="off" onclick="loadAutoCompleteScript()" onfocus="focusAutoComplete(this)" onfocusout="defocusAutoComplete(this)"  oninput="updateAutocomplete(this.value)" id="searchInputBar" class="form-control searchInput" type="text" placeholder="Select your game..." />
                   <input class="searchButton" type="submit" value="search" />
+                  <img id="loadScriptIMG" src="assets/img/loading.svg" />
                   <div id="autocompleteContainer">
                       <ul id="autocompleteList">
 
@@ -221,7 +232,7 @@
       </div>
     </div>
     <!-- User Requests -->
-    <div id="contentHeader">
+    <!--<div id="contentHeader">
         <table class="contentUserPostHeaderTable">
             <thead>
             <tr>
@@ -233,7 +244,7 @@
             </tr>
             </thead>
         </table>
-    </div>
+    </div>-->
     <div style="overflow-x:auto">
         <table class="contentUserPostHeaderTable">
             <tbody>
@@ -281,107 +292,37 @@
           </ul>
       </nav>
     </div>
-    <a style="color:black;background-color:lightblue" id="ajaxGamesContainer"></a>
-    <?php include "footer.php" ?>
+    <?php include ($_SERVER['DOCUMENT_ROOT'] . "pages/source/footer.php") ?>
+<script type="text/javascript">
+    var gameList = new Array(<?php
+    $api_url = 'https://swapitg.com/getGames';
+    $json = json_decode(file_get_contents($api_url), true);
+    for ($i=0;$i < count($json);$i++) {
+      echo "'".$json[$i]["name"]."',";
+    }?>);
+    var gameListPic = new Array(<?php
+    $api_url = 'https://swapitg.com/getGames';
+    $json = json_decode(file_get_contents($api_url), true);
+    for ($i=0;$i < count($json);$i++) {
+       echo "'".$json[$i]["icon_path"]."',";
+    }?>);
+    var loadScriptIMG = document.getElementById("loadScriptIMG");
+    var scriptLoaded = false;
+    var loadTime;
+    var timeNow;
+    var timeAfter;
+
+    function loadAutoCompleteScript() {
+      if (scriptLoaded == false) {
+        var script = document.createElement("script")
+        loadScriptIMG.style.display = "inherit";
+        scriptLoaded = true;
+        script.type = "text/javascript";
+        script.src = "assets/js/autocomplete.js";
+        document.getElementById("body").appendChild(script);
+        timeNow = new Date();
+      }
+    }
+</script>
 </body>
 </html>
-<script>
-    // When the user scrolls the page, execute myFunction
-    window.onscroll = function() {myFunction()};
-
-    // Get the navbar
-    var navbar = document.getElementById("contentHeader");
-
-    // Get the offset position of the navbar
-    var sticky = navbar.offsetTop;
-
-    // Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
-    function myFunction() {
-      if (window.pageYOffset >= sticky) {
-        navbar.classList.add("contentHeaderSticky")
-      } else {
-        navbar.classList.remove("contentHeaderSticky");
-      }
-    }
-</script>
-<script type="text/javascript">
-var gamesearchInput = document.getElementById("searchInputBar");
-var autocompleteContainer = document.getElementById("autocompleteContainer");
-var gameList = new Array(<?php
-$api_url = 'https://swapitg.com/getGames';
-$json = json_decode(file_get_contents($api_url), true);
-for ($i=0;$i < count($json);$i++) {
-    echo "'".$json[$i]["name"]."',";
-}?>);
- var gameListPic = new Array(<?php
- for ($i=0;$i < count($json);$i++) {
-    if (empty($json[$i]["icon_path"])) {
-        $json[$i]["icon_path"] = "empty";
-    }
-     echo "'".$json[$i]["icon_path"]."',";
- }?>);
-var selectedGameList = new Array()
-var selectedGameListPic = new Array();
-var selectedGameListCounter;
-
-function updateAutocomplete(slogan,param) {
-
-    if(slogan == "" && param != "all") {
-        autocompleteList.innerHTML = "";
-        autocompleteContainer.style.display = "none";
-        return 0;
-    }
-    var autoSuggestElements = document.getElementsByClassName("autoSuggest");
-    var sloganlength = slogan.length;
-    autocompleteList.innerHTML = "";
-    autocompleteContainer.style.display = "inherit";
-    slogan = slogan.toLowerCase();
-    selectedGameList = [];  // sorgt dafür, dass bei jedem Neuaufruf die Liste wieder geleert ist
-    selectedGameListCounter = -1; // verhindert dass eine zusätzliche leere Zeile entsteht
-    for(i=0;i<gameList.length;i++) {
-        if(slogan == (gameList[i].substr(0,sloganlength).toLowerCase()) && param != "all") {
-            selectedGameListCounter++;
-            selectedGameList[selectedGameListCounter] = gameList[i];
-            selectedGameListPic[selectedGameListCounter] = gameListPic[i];
-            autocompleteContainer.style.width = "auto";
-        }
-    }
-    selectedGameList.sort();
-    for(i=0;i<gameList.length;i++) {
-      if(selectedGameList[i] != "" && selectedGameList[i] != null) {
-          var l = document.createElement("LI");
-          var t = document.createTextNode(selectedGameList[i]);
-          l.appendChild(t);
-          l.className = "autoSuggest";
-          l.onclick = function applyAuto() {
-              var fillText = "";
-              autocompleteContainer.style.display = "inherit";
-              fillText = this.innerHTML.split("<");
-              fillText = fillText[0];
-              gamesearchInput.value = fillText;
-              updateAutocomplete(fillText);
-              autocompleteContainer.style.display = "none";
-          };
-          autocompleteList.appendChild(l);
-          var img = document.createElement("IMG");
-          l.innerHTML = selectedGameList[i];
-          l.appendChild(img);
-          img.className = "autoSuggestIMG";
-          img.alt = "";
-          img.src = selectedGameListPic[i];
-          autocompleteContainer.style.height = (selectedGameList.length * 40) + "px";
-      } else {
-        return 0;
-      }
-    }
-
-}
-function defocusAutoComplete(object) {
-    autocompleteContainer.style.visibility = "hidden";
-}
-function focusAutoComplete(object) {
-        autocompleteContainer.style.visibility = "visible";
-        autocompleteContainer.style.display = "inherit";
-        document.getElementById("autocompleteList").style.width = "300px";
-}
-</script>
