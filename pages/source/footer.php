@@ -7,6 +7,11 @@
     <title>Swapit</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/Pretty-Footer.css">
+    <style>
+    footer {
+      z-index:-1 !important;
+    }
+    </style>
 </head>
 
 <body>

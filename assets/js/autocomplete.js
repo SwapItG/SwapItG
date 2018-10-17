@@ -3,8 +3,9 @@ var autocompleteContainer = document.getElementById("autocompleteContainer");
 var selectedGameList = new Array()
 var selectedGameListPic = new Array();
 var selectedGameListCounter;
+var loadedImages = 0;
+var imageNum = 0;
 
-console.log("autocomplete.js loaded");
 updateAutocomplete("");
 
 function updateAutocomplete(slogan,param) {
@@ -14,6 +15,7 @@ function updateAutocomplete(slogan,param) {
   autocompleteContainer.style.display = "inherit";
   slogan = slogan.toLowerCase();
   selectedGameList = [];  // sorgt dafür, dass bei jedem Neuaufruf die Liste wieder geleert ist
+  selectedGameListPic = [];
   selectedGameListCounter = -1; // verhindert dass eine zusätzliche leere Zeile entsteht
   for(i=0;i<gameList.length;i++) {
       if(slogan == (gameList[i].substr(0,sloganlength).toLowerCase()) && param != "all" && slogan != "") {
@@ -48,8 +50,12 @@ function updateAutocomplete(slogan,param) {
         l.appendChild(img);
         img.className = "autoSuggestIMG";
         img.alt = "";
-        img.addEventListener('load', loadFinished);
+        if (selectedGameListPic[i] != "") {
+            img.addEventListener('load', loadFinished);
+            imageNum++;
+        }
         img.src = selectedGameListPic[i];
+        img.style.filter = "alpha(opacity=0)";
         autocompleteContainer.style.height = (selectedGameList.length * 40) + "px";
     } else {
       return 0;
@@ -57,14 +63,18 @@ function updateAutocomplete(slogan,param) {
   }
 }
 function autoLoad() {
-    loadScriptIMG.style.display = "none";
     timeAfter = new Date();
     loadTime = timeAfter - timeNow;
-    console.log(loadTime);
+    console.log("Searchbar Loading Time: " + loadTime+"ms");
 }
 
 function loadFinished() {
-  console.log("#######");
+   loadedImages++;
+   if (loadedImages == imageNum) {
+     loadScriptIMG.style.display = "none";
+     imageNum = 0;
+     autoLoad();
+   }
 }
 function defocusAutoComplete(object) {
     autocompleteContainer.style.visibility = "hidden";
@@ -75,4 +85,3 @@ function focusAutoComplete(object) {
         autocompleteContainer.style.display = "inherit";
         document.getElementById("autocompleteList").style.width = "300px";
 }
-autoLoad();

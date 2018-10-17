@@ -192,6 +192,19 @@
 		}
 	}
 
+	function getTrades($user_id = -1) {
+		if(logedin() || $user_id != -1) {
+			global $pdo;
+			$sql = "SELECT id FROM trade_proposal WHERE user_fk = :user_id";
+			$sth = $pdo->prepare($sql);
+			$sth->bindValue(":user_id", ($user_id == -1) ? logedin() : $user_id, PDO::PARAM_INT);
+			$sth->execute();
+			return $sth->fetchAll(PDO::FETCH_COLUMN);
+		} else {
+			return false;
+		}
+	}
+
 	function setAll($name, $profile_link, $info) {
 		if(setName($name, true) && setSteamProfile($profile_link, true) && setInfo($info, true)) {
 			setName($name);

@@ -1,4 +1,32 @@
-<?php include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php") ?>
+<?php
+include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php");
+require_once($_SERVER['DOCUMENT_ROOT'] . "/php/trade.php");
+
+$gameID = getGameID($_GET["game"]);
+$tradeCounts = 5;
+if (isset($_POST["pagelink"])) {
+    $tradeList = list_trades($tradeCounts,$_POST["pagelink"],$gameID,0,0,0,0);
+} else {
+    $tradeList = list_trades($tradeCounts,0,$gameID,0,0,0,0);
+}
+
+if (empty($_GET["game"]) || empty($tradeList['list'])) {
+    $tradeList["list"][0] = "";
+    $tradeList["list"][1] = "";
+    $tradeList["list"][2] = "";
+    $tradeList["list"][3] = "";
+}
+
+function getGameID($gameName) {
+    $api_url = 'https://swapitg.com/getGames';
+    $json = json_decode(file_get_contents($api_url), true);
+    for ($i=0;$i<count($json);$i++) {
+      if ($json[$i]["name"] == $gameName) {
+          return $json[$i]["id"];
+      }
+    }
+}
+ ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,12 +43,24 @@
         }
         body {
             background-color:var(--middle-black) !important;
+            color:white !important;
+        }
+        .removeFilterX {
+          width:18px;
+          margin-left:10px;
+          filter:grayscale(0);
+          text-align:center;
+          transition:0.1s;
+        }
+        .removeFilterX:hover {
+          cursor:pointer;
+          filter:grayscale(0.75);
         }
         .contentUserPostHeaderTable {
             border-collapse:collapse;
             border-width:1px;
             width:100%;
-            min-width: 900px;
+            min-width: 400px;
             border-spacing: 0;
         }
         .contentUserPostHeaderTable th {
@@ -39,7 +79,7 @@
             margin-bottom:15px
         }
         .contentUserPostTable td {
-            width:16.6%;
+            width:33%;
             border-width:1px;
             text-align: center;
             border-spacing:0px;
@@ -58,8 +98,9 @@
             margin-left:-1px;
         }
         .paginationDiv {
-            margin-top:25px;
-            margin-bottom:-25px;
+            border:none;
+            text-align: center;
+            width:100%;
         }
         #contentHeader th {
             height:35px;
@@ -125,9 +166,11 @@
           margin-left:5px;
         }
         #loadScriptIMG {
-          position: relative;
+          position: absolute;
           width:35px;
           display:none;
+          z-index:3;
+          left:100%;
         }
         @media only screen and (max-width: 767px) {
             #autocompleteContainer {
@@ -147,9 +190,9 @@
         <tr>
         <!-- Simple Filter -->
           <td style="width:300px">
-              <form method="POST" action="">
+              <form method="GET" action="">
                 <div class="input-group searchbar">
-                  <input autocomplete="off" onclick="loadAutoCompleteScript()" onfocus="focusAutoComplete(this)" onfocusout="defocusAutoComplete(this)"  oninput="updateAutocomplete(this.value)" id="searchInputBar" class="form-control searchInput" type="text" placeholder="Select your game..." />
+                  <input name="game" value="<? echo $_GET["game"] ?>" autocomplete="off" onclick="loadAutoCompleteScript()" onfocus="focusAutoComplete(this)" onfocusout="defocusAutoComplete(this)"  oninput="updateAutocomplete(this.value)" id="searchInputBar" class="form-control searchInput" type="text" placeholder="Select your game..." />
                   <input class="searchButton" type="submit" value="search" />
                   <img id="loadScriptIMG" src="assets/img/loading.svg" />
                   <div id="autocompleteContainer">
@@ -160,6 +203,18 @@
                 </div>
               </form>
           </td>
+          <?
+          if (!empty($gameID)) {
+              echo '
+              <td>
+                <form method="GET" action="">
+                    <img onclick="removeFilterTrigger()" class="removeFilterX" src="https://vignette.wikia.nocookie.net/f1wikia/images/7/7e/Red_x.png/revision/latest?cb=20120910155654">
+                        <input id="removeFilterButton" style="display:none" type="submit" />
+                    </img>
+                </form>
+              </td>';
+          }
+          ?>
           <!-- Extended Filter -->
           <td style="float:right">
               <a style="width:100px;margin-left:25px;" class="btn btn-outline-info" data-toggle="collapse" href="#collapse-1">ext. Filter</a>
@@ -249,7 +304,7 @@
         <table class="contentUserPostHeaderTable">
             <tbody>
             <?php
-            for ($i=0;$i<8;$i++) {
+            for ($i=0;$i<count($tradeList["list"]);$i++) {
               echo '<tr>
                   <td style="border:none" colspan="6">
                       <div>
@@ -257,17 +312,16 @@
                               <tr>
                                   <td style="">
                                       <div class="contentUserPostNameDIV">
-                                          FloX'.($i+12).'aaaaa
+                                      '.getName(getTradeData($tradeList["list"][$i])["user_id"]).'
                                       </div>
                                   </td>
                                   <td style="background-image:none;border:none" colspan="5">
                               </tr>
                               <tr>
-                                  <td>Rocket League
-                                  <td style="font-size:13px">I would like to trade some wheels
-                                  <td>'.$i.'m ago
-                                  <td>Steam
-                                  <td>Item
+                                  <td>'.getGameName(getTradeData($tradeList["list"][$i])["game_id"]).'
+                                  <img class="autoSuggestIMG" src="'.getGameIcon(getTradeData($tradeList["list"][$i])["game_id"]).'"/>
+                                  <td style="font-size:13px">'.getTradeData($tradeList["list"][$i])["description"].'
+                                  <td>'.getTradeData($tradeList["list"][$i])["creation_time"].'
                               </tr>
                           </table>
                       </div>
@@ -279,17 +333,18 @@
         </table>
     </div>
     <!-- Pagination -->
-    <div class="paginationDiv" style="height:10vh">
-      <nav style="margin-left:calc(50% - 133px)">
-          <ul class="pagination" style="position:inherit">
-              <li class="page-item"><a class="page-link" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-              <li class="page-item"><a class="page-link">1</a></li>
-              <li class="page-item"><a class="page-link">2</a></li>
-              <li class="page-item"><a class="page-link">3</a></li>
-              <li class="page-item"><a class="page-link">4</a></li>
-              <li class="page-item"><a class="page-link">5</a></li>
-              <li class="page-item"><a class="page-link" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+    <div class="paginationDiv">
+      <nav style="width:100px;margin-left:auto;margin-right:auto">
+        <form action="" method="POST">
+          <ul class="pagination">
+            <li class="page-item"><button type="submit" name="pagelink" <?php echo($tradeList["backward"] !== false ? "" : "disabled") ?> value="0">|«</button></li>
+            <li class="page-item"><button type="submit" name="pagelink" <?php echo($tradeList["backward"] !== false ? "" : "disabled") ?> value="<?php echo($tradeList["backward"]) ?>">«</button></li>
+            <?
+                echo '<li class="paginationLi"><a class="paginationNumb">'.$_POST["currentPageCount"].'</a></li>';
+            ?>
+            <li class="page-item"><button type="submit" name="pagelink" <?php echo($tradeList["forward"] !== false ? "" : "disabled") ?> value="<?php echo($tradeList["forward"]) ?>">»</button></li>
           </ul>
+        </form>
       </nav>
     </div>
     <?php include ($_SERVER['DOCUMENT_ROOT'] . "pages/source/footer.php") ?>
@@ -322,6 +377,10 @@
         document.getElementById("body").appendChild(script);
         timeNow = new Date();
       }
+    }
+
+    function removeFilterTrigger() {
+      document.getElementById('removeFilterButton').click();
     }
 </script>
 </body>

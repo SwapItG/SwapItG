@@ -4,9 +4,9 @@
 
 	$output = array();
 	if(isset($_POST["pagelink"])) {
-		$output = list_trades(3, $_POST["pagelink"], $_GET["game_id"], $_GET["offer"], $_GET["demand"]);
+		$output = list_trades(3, $_POST["pagelink"], $_GET["game_id"], $_GET["offer"], $_GET["demand"], explode(", ", $_GET["offer_attributes"]), explode(", ", $_GET["demand_attributes"]));
 	} else {
-		$output = list_trades(3, 0, $_GET["game_id"], $_GET["offer"], $_GET["demand"]);
+		$output = list_trades(3, 0, $_GET["game_id"], $_GET["offer"], $_GET["demand"], explode(", ", $_GET["offer_attributes"]), explode(", ", $_GET["demand_attributes"]));
 	}
 ?>
 
@@ -24,6 +24,10 @@
 			<input type="text" name="offer" value="<?php echo($_GET["offer"]) ?>">
 			Search Demand:
 			<input type="text" name="demand" value="<?php echo($_GET["demand"]) ?>">
+			Offer Attributes (, seperated):
+			<input type="text" name="offer_attributes" value="<?php echo($_GET["offer_attributes"]) ?>">
+			Demand Attributes (, seperated):
+			<input type="text" name="demand_attributes" value="<?php echo($_GET["demand_attributes"]) ?>">
 			<input type="submit" value="Search">
 		</form>
 		<form action="" method="post">
@@ -33,9 +37,15 @@
 			<button type="submit" name="pagelink" <?php echo($output["backward"] !== false ? "" : "disabled") ?> value="<?php echo($output["backward"]) ?>">&#x3C;&#x3C;</button>
 			Forward:
 			<button type="submit" name="pagelink" <?php echo($output["forward"] !== false ? "" : "disabled") ?> value="<?php echo($output["forward"]) ?>">&#x3E;&#x3E;</button>
-			<br>
-			<br>
-			<?php print_r($output["list"]) ?>
 		</form>
+		<br>
+		<br>
+		<pre>
+			<?php
+				for ($i=0; $i < count($output["list"]); $i++) {
+					print_r(getTradeData($output["list"][$i]));
+				}
+			?>
+		</pre>
 	</body>
 </html>
