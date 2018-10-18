@@ -183,6 +183,7 @@ function getGameID($gameName) {
 <body id="body">
     <!-- Placeholder -->
     <div style="height:15vh">
+		<h1 style="color:#F00;font-weight:bold;text-align:center;">Ändere das autologin beim first login</h1> <!-- TODO: Remove this line -->
     </div>
     <!-- Filter Area -->
     <div>

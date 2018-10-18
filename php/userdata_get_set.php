@@ -2,6 +2,7 @@
 	require_once(__DIR__ . "/db_connect.php");
 	require_once(__DIR__ . "/utility.php");
 	require_once(__DIR__ . "/session.php");
+	require_once(__DIR__ . "/comment_section.php");
 
 	//original is unsecure
 	function getEmail($orginal = false) {
@@ -203,6 +204,48 @@
 		} else {
 			return false;
 		}
+	}
+
+	function getComments($user_id = -1) {
+		if(logedin() || $user_id != -1) {
+			global $pdo;
+			$sql = "SELECT id AS comment_id, comment_section_fk AS comment_section_id FROM comment WHERE user_fk = :user_id";
+			$sth = $pdo->prepare($sql);
+			$sth->bindValue(":user_id", ($user_id == -1) ? logedin() : $user_id, PDO::PARAM_INT);
+			$sth->execute();
+			return $sth->fetchAll(PDO::FETCH_ASSOC);
+		} else {
+			return false;
+		}
+	}
+
+	function getCommentSection($user_id = -1) {
+		if(logedin() || $user_id != -1) {
+			global $pdo;
+			$sql = "SELECT comment_section_fk FROM user WHERE id = :user_id";
+			$sth = $pdo->prepare($sql);
+			$sth->bindValue(":user_id", ($user_id == -1) ? logedin() : $user_id, PDO::PARAM_INT);
+			$sth->execute();
+			return $sth->fetch(PDO::FETCH_COLUMN);
+		} else {
+			return false;
+		}
+	}
+
+	function getUserCommentSectionStatus($user_id = -1) {
+		if(logedin() || $user_id != -1) {
+			return get_status_comment_section(getCommentSection($user_id));
+		} else {
+			return false;
+		}
+	}
+
+	function setUserCommentSectionStatus($status) {
+		if(!logedin()) {
+			return false;
+		}
+		set_status_comment_section(getCommentSection(), $status);
+		return true;
 	}
 
 	function setAll($name, $profile_link, $info) {

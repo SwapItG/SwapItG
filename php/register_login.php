@@ -4,6 +4,7 @@
 	require_once(__DIR__ . "/session.php");
 	require_once(__DIR__ . "/userdata_get_set.php");
 	require_once(__DIR__ . "/trade.php");
+	require_once(__DIR__ . "/comment_section.php");
 
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
@@ -170,8 +171,9 @@
 			return 3;
 		}
 
-		$sql = "UPDATE user SET verification_code = NULL, code_generation_time = NULL, verified = 1 WHERE id = :id";
+		$sql = "UPDATE user SET verification_code = NULL, code_generation_time = NULL, verified = 1, comment_section_fk = :comment_section_id WHERE id = :id";
 		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":comment_section_id", create_comment_section(), PDO::PARAM_INT);
 		$sth->bindParam(":id", $id_password["id"], PDO::PARAM_INT);
 		$sth->execute();
 
@@ -243,6 +245,13 @@
 		for ($i=0; $i < count($trades); $i++) {
 			delete_trade($trades[$i]);
 		}
+
+		$comments = getComments();
+		for ($i=0; $i < count($comments); $i++) {
+			delete_comment($comments[$i]["comment_section_id"]);
+		}
+
+		delete_comment_section(getCommentSection());
 
 		$sql = "DELETE FROM user WHERE id = :id";
 		$sth = $pdo->prepare($sql);
