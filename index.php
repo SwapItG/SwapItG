@@ -2,6 +2,10 @@
 include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php");
 require_once($_SERVER['DOCUMENT_ROOT'] . "/php/trade.php");
 
+if(empty($_GET["game"])) {
+	$_GET["game"] = null;
+}
+
 $gameID = getGameID($_GET["game"]);
 $tradeCounts = 5;
 if (isset($_POST["pagelink"])) {
@@ -10,7 +14,7 @@ if (isset($_POST["pagelink"])) {
     $tradeList = list_trades($tradeCounts,0,$gameID,0,0,0,0);
 }
 
-if (empty($_GET["game"]) || empty($tradeList['list'])) {
+if (empty($tradeList['list'])) {
     $tradeList["list"][0] = "";
     $tradeList["list"][1] = "";
     $tradeList["list"][2] = "";
@@ -183,7 +187,6 @@ function getGameID($gameName) {
 <body id="body">
     <!-- Placeholder -->
     <div style="height:15vh">
-		<h1 style="color:#F00;font-weight:bold;text-align:center;">Ändere das autologin beim first login</h1> <!-- TODO: Remove this line -->
     </div>
     <!-- Filter Area -->
     <div>

@@ -516,7 +516,7 @@
 
 		global $pdo;
 		if($linkdata == 0) {
-			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.game_fk = :game_id $sql_where GROUP BY item_offer.id, item_demand.id HAVING $sql_having ORDER BY trade_proposal.id DESC LIMIT :amount";
+			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE (:game_id IS NULL OR trade_proposal.game_fk = :game_id) $sql_where GROUP BY item_offer.id, item_demand.id HAVING $sql_having ORDER BY trade_proposal.id DESC LIMIT :amount";
 			$sth = $pdo->prepare($sql);
 			$sth->bindValue(":game_id", $game_id, PDO::PARAM_INT);
 			$sth->bindValue(":item_offer_name", "%" . htmlspecialchars($item_offer_name) . "%", PDO::PARAM_STR);
@@ -530,7 +530,7 @@
 			$backward_linkdata = false;
 			return array("forward" => $forward_linkdata, "backward" => $backward_linkdata, "list" => array_slice($output, 0, $trades_per_page));
 		} else if($linkdata > 0) {
-			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.id < :linkdata AND trade_proposal.game_fk = :game_id $sql_where GROUP BY item_offer.id, item_demand.id HAVING $sql_having ORDER BY trade_proposal.id DESC LIMIT :amount";
+			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.id < :linkdata AND (:game_id IS NULL OR trade_proposal.game_fk = :game_id) $sql_where GROUP BY item_offer.id, item_demand.id HAVING $sql_having ORDER BY trade_proposal.id DESC LIMIT :amount";
 			$sth = $pdo->prepare($sql);
 			$sth->bindValue(":linkdata", $linkdata, PDO::PARAM_INT);
 			$sth->bindValue(":game_id", $game_id, PDO::PARAM_INT);
@@ -542,7 +542,7 @@
 			$output = $sth->fetchAll(PDO::FETCH_COLUMN);
 
 			$forward_linkdata = (count($output) > $trades_per_page) ? $output[$trades_per_page - 1] : false;
-			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.id >= :linkdata AND trade_proposal.game_fk = :game_id $sql_where GROUP BY item_offer.id, item_demand.id HAVING $sql_having ORDER BY trade_proposal.id ASC LIMIT :amount";
+			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.id >= :linkdata AND (:game_id IS NULL OR trade_proposal.game_fk = :game_id) $sql_where GROUP BY item_offer.id, item_demand.id HAVING $sql_having ORDER BY trade_proposal.id ASC LIMIT :amount";
 			$sth2 = $pdo->prepare($sql);
 			$sth2->bindValue(":linkdata", $linkdata, PDO::PARAM_INT);
 			$sth2->bindValue(":game_id", $game_id, PDO::PARAM_INT);
@@ -554,7 +554,7 @@
 			$backward_linkdata = (count($sth2->fetchAll(PDO::FETCH_NUM)) > $trades_per_page) ? $output[0] : 0;
 			return array("forward" => $forward_linkdata, "backward" => -$backward_linkdata, "list" => array_slice($output, 0, $trades_per_page));
 		} else {
-			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.id > :linkdata AND trade_proposal.game_fk = :game_id $sql_where GROUP BY item_offer.id, item_demand.id HAVING $sql_having ORDER BY trade_proposal.id ASC LIMIT :amount";
+			$sql = "SELECT DISTINCT trade_proposal.id FROM $sql_from WHERE trade_proposal.id > :linkdata AND (:game_id IS NULL OR trade_proposal.game_fk = :game_id) $sql_where GROUP BY item_offer.id, item_demand.id HAVING $sql_having ORDER BY trade_proposal.id ASC LIMIT :amount";
 			$sth = $pdo->prepare($sql);
 			$sth->bindValue(":linkdata", -$linkdata, PDO::PARAM_INT);
 			$sth->bindValue(":game_id", $game_id, PDO::PARAM_INT);

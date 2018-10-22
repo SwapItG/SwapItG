@@ -85,7 +85,15 @@ switch ($error) {
   </head>
   <body>
     <div class="accountEdit" id="accountProfilePic">
-        <div id="picFrame"><img id="picPreview" type="text" src="<?echo getImage()?>" /></div>
+        <div id="picFrame"><img id="picPreview" type="text" src="
+        <?PHP
+        if(getImage() == ""){
+          echo "../../assets/img/defaultPic.jpg";
+        }else {
+          echo getImage();
+        }
+       ?>
+        " /></div>
         <div id="uploadButtons">
           <form method="POST" action="" enctype="multipart/form-data">
             <button type="button" class="submitButton" id="selectFileButton" onclick="selectFile()">choose file</button>

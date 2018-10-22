@@ -1,5 +1,8 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . "/php/register_login.php");
+if ($_POST["submit"] == "cancel") {
+    header('Location: https://swapitg.com/account');
+}
 if (empty(logedin())) {
     header('Location: https://swapitg.com');
 }
@@ -160,7 +163,16 @@ include ($_SERVER['DOCUMENT_ROOT'] . "pages/source/header.php");
           <div id="boxDisplay">
               <div id="accountDisplay">
                   <div id="accountTopPlaceholder"></div>
-                  <div id="accountPicBox"><div id="picFrame"><img id="accountPic" src="<?PHP echo getImage() ?>" /></div></div>
+                  <div id="accountPicBox"><div id="picFrame"><img id="accountPic" src="
+                    <?PHP
+
+                    if(getImage() == ""){
+                      echo "../../assets/img/defaultPic.jpg";
+                    }else {
+                      echo getImage();
+                    }
+
+                   ?>" /></div></div>
                   <div id="accountNameBox"><?PHP echo getName(); ?></div>
                   <div id="accountInfoBox"><span><?PHP echo getInfo(); ?></span></div>
                   <ul id="linkedAccountsBox">

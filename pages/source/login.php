@@ -1,71 +1,59 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']  . "php/register_login.php");
-require_once($_SERVER['DOCUMENT_ROOT']  . "php/userdata_get_set.php");
-require_once($_SERVER['DOCUMENT_ROOT']  . "php/session.php");
-setToken();
-login($_POST["logEMail"],$_POST["logPassw"]);
+  require_once($_SERVER['DOCUMENT_ROOT']  . "php/register_login.php");
+  require_once($_SERVER['DOCUMENT_ROOT']  . "php/userdata_get_set.php");
+  require_once($_SERVER['DOCUMENT_ROOT']  . "php/session.php");
+  setToken();
+  login($_POST["logEMail"],$_POST["logPassw"]);
 ?>
-
 <?php
-echo '<li><a class="nav-link-correction navItemAlign" href="https://swapitg.com/">HOME</a></li>';
-if (empty(logedin())) {
-  echo '<li><a class="nav-link-correction navItemAlign" href="registration.php">Register</a></li>';
-  echo '<div id="loginContainer">
-            <form method="POST" action="">
-                <input class="logInput" type="text" name="logEMail" placeholder="email" />
-                <input class="logInput" type="password" name="logPassw" placeholder="password" />
-                <input id="logSubmit" type="submit" name="submitLog" value="submit" />
-            </form>
-        </div>';
-} else {
-    echo '<li id="tempName">
-            <span class="nav-link-correction navItemAlign">
-                <div id="profileCollapseMenu">
-                    <ul style="list-style-type: none;">
-                        <li class="collapseMenuLinks"><a class="navSubLink" href="account.php">new trade</a></li>
-                        </li>
-                        <li class="collapseMenuLinks"><a class="navSubLink" href="https://swapitg.com/account">account</a></li>
-                        </li>
-                        <li>
-                            <form method="POST" action="https://swapitg.com/logout">
-                                <input type="hidden" name="csrf_token" value="'.getToken().'" />
-                                <input id="signOutButton" type="submit" name="logout" value="SIGN OUT" />
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-                <span onclick="toggleUserMenu()">
-                    <span id="uname">'.getName().'</span>
-                    <span id="collapseArrow"> ▼</span>
-                </span>';
-                if(getImage() == "data:image/jpg;base64,"){
-                  echo '<img id="profilePic" src="/assets/img/defaultPic.jpg" />';
-                }else {
-                  echo '<img id="profilePic" src="'.getImage().'" />';
-                }
-                echo '</span></li>';
-}
+  echo '<li><a class="nav-link-correction navItemAlign" href="https://swapitg.com/">HOME</a></li>';
+  if (empty(logedin())) {
+    echo '<li><a class="nav-link-correction navItemAlign" href="registration">Register</a></li>';
+    echo '<div id="loginContainer">
+              <form method="POST" action="">
+                  <input class="logInput" type="text" name="logEMail" placeholder="email" />
+                  <input class="logInput" type="password" name="logPassw" placeholder="password" />
+                  <input id="logSubmit" type="submit" name="submitLog" value="submit" />
+              </form>
+          </div>';
+  } else {
+      echo '<li id="tempName">
+              <span class="nav-link-correction navItemAlign">
+                  <div id="profileCollapseMenu">
+                      <ul style="list-style-type: none;">
+                          <li class="collapseMenuLinks"><a class="navSubLink" href="account.php">new trade</a></li>
+                          </li>
+                          <li class="collapseMenuLinks"><a class="navSubLink" href="https://swapitg.com/account">account</a></li>
+                          </li>
+                          <li>
+                              <form method="POST" action="https://swapitg.com/logout">
+                                  <input type="hidden" name="csrf_token" value="'.getToken().'" />
+                                  <input id="signOutButton" type="submit" name="logout" value="SIGN OUT" />
+                              </form>
+                          </li>
+                      </ul>
+                  </div>
+                  <span onclick="toggleUserMenu()">
+                      <span id="uname">'.getName().'</span>
+                      <span id="collapseArrow"> ▼</span>
+                  </span>';
+                  if(getImage() == ""){
+                    echo '<img id="profilePic" src="../../assets/img/defaultPic.jpg" />';
+                  }else {
+                    echo '<img id="profilePic" src="'.getImage().'" />';
+                  }
+                  echo '</span></li>';
+  }
 ?>
 <html>
     <head>
     <link rel="stylesheet" href="../../../assets/css/global_var.css">
-        <style>
-            a,li,ul{
-              border:none;
-            }
+        <style type="text/css">
             ::-webkit-input-placeholder { /* Chrome */
               color: var(--skyblue);
               opacity: 1;
             }
-            :-ms-input-placeholder { /* IE 10+ */
-              color: var(--skyblue);
-              opacity: 1;
-            }
             ::-moz-placeholder { /* Firefox 19+ */
-              color: var(--skyblue);
-              opacity: 1;
-            }
-            :-moz-placeholder { /* Firefox 4 - 18 */
               color: var(--skyblue);
               opacity: 1;
             }

@@ -9,7 +9,7 @@
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> passwords dont match
-	//return 3 -> the password or the user name does not meet our requirements
+	//return 3 -> the password, user name or email does not meet our requirements
 	//return 4 -> email already used
 	//return 5 -> email couldnt be sent
 	function register($name, $email, $password, $password2) {
@@ -25,11 +25,11 @@
 			return 2;
 		}
 
-		if(!password_security_check($password) || !valid_name_check($name)) {
+		if(!password_security_check($password) || !valid_name_check($name) || strlen($email) > 256) {
 			return 3;
 		}
 
-		$sql = "SELECT email FROM user WHERE email = :email";
+		$sql = "SELECT email FROM user WHERE REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\")";
         $sth = $pdo->prepare($sql);
 		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
         $sth->execute();
@@ -59,8 +59,8 @@
 	        $sth->execute();
 
 			start_session();
-			//$_SESSION["reg_email"] = $email;
-			//$_SESSION["reg_password"] = $password;
+			$_SESSION["reg_email"] = $email;
+			$_SESSION["reg_password"] = $password;
 			return 0;
 		} else {
 			return 5;
@@ -70,7 +70,7 @@
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> verification-code time passed or wrong email
-	//return 3 -> already validated
+	//return 3 -> already verified
 	//return 4 -> email couldnt be sent
 	function register_resend_email($email) {
 		global $pdo;
@@ -81,13 +81,13 @@
 			return 1;
 		}
 
-		$sql = "SELECT name, verification_code FROM user WHERE email = :email AND verified = 0";
+		$sql = "SELECT name, verification_code FROM user WHERE REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\") AND verified = 0";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
-			$sql = "SELECT id FROM user WHERE email = :email AND verified = 1";
+			$sql = "SELECT id FROM user WHERE REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\") AND verified = 1";
 			$sth2 = $pdo->prepare($sql);
 			$sth2->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 			$sth2->execute();
@@ -147,14 +147,14 @@
 			return 1;
 		}
 
-		$sql = "SELECT id, password FROM user WHERE verification_code = :verification_code AND email = :email AND verified = 0";
+		$sql = "SELECT id, password FROM user WHERE verification_code = :verification_code AND REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\") AND verified = 0";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":verification_code", $verification_code, PDO::PARAM_STR);
 		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
-			$sql = "SELECT id FROM user WHERE email = :email AND verified = 1";
+			$sql = "SELECT id FROM user WHERE REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\") AND verified = 1";
 			$sth2 = $pdo->prepare($sql);
 			$sth2->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 			$sth2->execute();
@@ -192,7 +192,7 @@
 			return 1;
 		}
 
-		$sql = "SELECT id, password FROM user WHERE email = :email AND verified = 1";
+		$sql = "SELECT id, password FROM user WHERE REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\") AND verified = 1";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
@@ -226,7 +226,7 @@
 			return 2;
 		}
 
-		$sql = "SELECT id, password FROM user WHERE id = :id AND email = :email";
+		$sql = "SELECT id, password FROM user WHERE id = :id AND REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\")";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":id", $_SESSION["user_id"], PDO::PARAM_INT);
 		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
@@ -272,7 +272,7 @@
 			return 1;
 		}
 
-		$sql = "SELECT id FROM user WHERE email = :email AND verified = 1";
+		$sql = "SELECT id FROM user WHERE REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\") AND verified = 1";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
 		$sth->execute();
@@ -319,7 +319,7 @@
 			return 1;
 		}
 
-		$sql = "SELECT id FROM user WHERE verification_code = :verification_code AND email = :email AND verified = 1";
+		$sql = "SELECT id FROM user WHERE verification_code = :verification_code AND REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\") AND verified = 1";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":verification_code", $verification_code, PDO::PARAM_STR);
 		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
@@ -345,5 +345,26 @@
 		login($email, $password);
 		header("Location: https://swapitg.com");
 		return 0;
+	}
+
+	function is_registered($email) {
+		global $pdo;
+
+		$pdo->query("DELETE FROM user WHERE verified = 0 AND TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, code_generation_time)) > 600");
+
+		if(empty($email) || is_array($email)) {
+			return null;
+		}
+
+		$sql = "SELECT id FROM user WHERE REPLACE(email, \".\", \"\") = REPLACE(:email, \".\", \"\")";
+		$sth = $pdo->prepare($sql);
+		$sth->bindParam(":email", mail_simplify($email), PDO::PARAM_STR);
+		$sth->execute();
+
+		if($sth->rowCount() == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 ?>

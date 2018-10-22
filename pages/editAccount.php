@@ -1,21 +1,70 @@
 <?
-require_once(__DIR__ . "/../php/userdata_get_set.php");
-require_once(__DIR__ . "/../php/session.php");
+  require_once(__DIR__ . "/../php/userdata_get_set.php");
+  require_once(__DIR__ . "/../php/session.php");
+  require_once(__DIR__ . "/../php/register_login.php");
 
   if (empty(logedin())) {
       unset($_POST);
       header('Location: https://swapitg.com/');
   }
-
   if ($_POST["submitChanges"] == "cancel") {
       unset($_POST["submitChanges"]);
       header('Location: https://swapitg.com/account');
   }
-
   if ($_POST["submitChanges"] == "save") {
-      unset($_POST["submitChanges"]);
       setAll($_POST["name"],$_POST["steamlink"],$_POST["info"]);
       unset($_POST);
+      header('Location: https://swapitg.com/account');
+  }
+  if ($_POST["deleteAccount"] == "confirm") {
+      $result = delete_account(getEmail(),$_POST["deletePasswortConfirm"]);
+      if ($result == 0) {
+        unset($_POST);
+        header('Location: https://swapitg.com');
+      } else {
+        unset($_POST);
+        header('Location: https://swapitg.com/editAccount?error='.$result);
+      }
+  }
+  if ($_POST["passwordChangeRequest"] == "change") {
+    $passwRequestResult = password_change(getEmail());
+  }
+
+  $deleteError;
+  switch ($_GET["error"]) {
+      case 1:
+        $deleteError = "You must be logged in to perform that action!";
+        break;
+
+      case 2:
+        $deleteError = "Some parameters are empty!";
+        break;
+
+      case 3:
+        $deleteError = "Used Email is wrong!";
+        break;
+
+      case 4:
+        $deleteError = "password incorrect!";
+        break;
+
+  }
+  switch ($passwRequestResult) {
+      case 0:
+        $passwRequestResult = "We sent you an email change Request.<br>Check your mails!";
+        break;
+
+      case 1:
+        $passwRequestResult = "Your Email couldn't be found!";
+        break;
+
+      case 2:
+        $passwRequestResult = "This account doesn't exist!";
+        break;
+
+      case 3:
+        $passwRequestResult = "There was an error with our email server. Please try again later!";
+        break;
   }
 ?>
 <?php include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php") ?>
@@ -24,16 +73,49 @@ require_once(__DIR__ . "/../php/session.php");
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwapG Edit-Account</title>
-    <style>
+    <style type="text/css">
+      ::-webkit-input-placeholder { /* Chrome */
+        color: var(--light-orange);
+        opacity: 1;
+      }
+      ::-moz-placeholder { /* Firefox 19+ */
+        color: var(--light-orange);
+        opacity: 1;
+      }
       :root {
-      --pic-size:50px;
-      --frame-size:54px;
-      --default-width:300px;
+          --pic-size:50px;
+          --frame-size:54px;
+          --default-width:300px;
       }
       body {
         background-color:#444;
         height:100%;
         color:#DDD;
+      }
+      #confirmDeleteBox {
+        position:absolute;
+        background-color:rgba(0,0,0,0.5);
+        width:100%;
+        height:calc(100vh - 97px);
+        top:97px;
+        text-align: center;
+        display:none;
+      }
+      #areYouSure {
+        position:absolute;
+        background-color:rgba(235,235,235,1);
+        width:400px;
+        height:200px;
+        top:calc(50% - (200px / 2) - 100px);
+        text-align: center;
+        display:inherit;
+        left:calc(50% - 400px / 2);
+        padding-top:60px;
+        border-radius:4px;
+      }
+      #areYouSureQuestion {
+        color:black;
+        margin-top:-25px;
       }
       #accountDisplay {
           overflow-x: hidden;
@@ -64,6 +146,36 @@ require_once(__DIR__ . "/../php/session.php");
           width: 1000px;
           display: flex;
           flex-flow: row wrap;
+          padding-top:25px;
+      }
+      #errorMessage {
+        color:#F44;
+        font-size:13px;
+        font-family:sans-serif;
+        padding-left:10px;
+      }
+      .deletePasswortInputField {
+        font-family:sans-serif;
+        width:250px;
+        font-size:14px;
+        border-radius:2px;
+        background-color:rgba(50,50,50,1);
+        padding-left:10px;
+        height:30px;
+        color:var(--lightweight-orange);
+      }
+      .cancelButton {
+          background-color:rgba(144, 144, 144, 1);
+          border:none;
+      }
+      .cancelButton:hover {
+          background-color:rgba(120, 117, 117, 1) !important;
+      }
+      .confirmButton {
+          background-color:var(--lightweight-orange);
+      }
+      .confirmButton:hover {
+          background-color:var(--lightweight-orange-hover) !important;
       }
       .accountEdit {
           width:85%;
@@ -79,7 +191,7 @@ require_once(__DIR__ . "/../php/session.php");
       }
       #submitBox {
           text-align:left;
-          margin-bottom:25px;
+          margin-bottom:40px;
       }
       #accountPicIframe {
           height:140px;
@@ -89,14 +201,26 @@ require_once(__DIR__ . "/../php/session.php");
           width:var(--default-width);
           height:100px;
           font-size:13px;
+          padding-left:5px;
       }
       .inputField {
           width:var(--default-width);
           font-size:13px;
           font-family:arial;
+          padding-left:5px;
       }
       .submitButton {
           width:100px;
+          height:35px;
+          border:none;
+          border-radius:1px;
+      }
+      .submitButton:hover {
+        border-bottom:solid;
+        border-bottom-color:#333;
+        background-color:#CCC;
+        height:38px;
+        cursor:pointer;
       }
       #mail {
           color:grey;
@@ -112,10 +236,13 @@ require_once(__DIR__ . "/../php/session.php");
           font-family:serif;
           font-size:12px;
           letter-spacing: 1px;
+          background-color:rgba(0,0,0,0);
+          border:none;
       }
       #changepassword:hover {
           color:#99F;
           text-decoration: underline;
+          cursor:pointer;
       }
       @media only screen and (max-width: 767px) {
           #accountInfoBox {
@@ -151,14 +278,36 @@ require_once(__DIR__ . "/../php/session.php");
     </style>
     </head>
     <body>
-      <div id="background"></div>
+      <!-- Box for Account Deletion -->
+      <div  id="confirmDeleteBox">
+          <div id="areYouSure">
+              <p id="areYouSureQuestion"> Do you want to delete your account ? </p>
+              <form method="POST" action="">
+                  <input data-lpignore="true" autocomplete="off" class="deletePasswortInputField" type="password" name="deletePasswortConfirm" placeholder="continue with password" /><br><br>
+                  <input class="submitButton confirmButton" name="deleteAccount" type="submit" value="confirm" />
+                  <button class="submitButton cancelButton" type="button" onclick="toggleDeleteBox()">cancel</button>
+              </form>
+          </div>
+      </div>
+      <?
+      if ($_POST["passwordChangeRequest"] == "change") {
+          echo '
+          <div onclick="toggleChangeRequest(this)" style="display:inherit" id="confirmDeleteBox" class="changeRequestDiv">
+              <div id="areYouSure">
+                  <p style="color:#F44" id="areYouSureQuestion">'.$passwRequestResult.'</p>
+                  <button id="confirmPasswordRequest" class="submitButton">OKAY</button>
+              </div>
+          </div>';
+      }
+      ?>
+      <!-- <div id="background"></div> -->
       <form method="POST" action="">
         <div id="accountDisplay">
           <div id="accountInfoBox">
             <div id="accountEditBox">
                 <div class="accountTopic">Name:</div>
                 <div class="accountEdit" id="accountNameBox">
-                    <input class="inputField" name="name" type="text" value="<? echo getName() ?>" placeholder="username" />
+                    <input class="inputField" name="name" type="text" value="<? echo getName() ?>" placeholder="username" data-lpignore="true" autocomplete="off" />
                 </div>
                 <div class="accountTopic">Email:</div>
                 <div class="accountEdit" id="accountMail">
@@ -167,7 +316,9 @@ require_once(__DIR__ . "/../php/session.php");
                 <div class="accountTopic">Password:</div>
                 <div class="accountEdit" id="accountPassw">
                     <span id="password"><? echo "********" ?></span>
-                    <a id="changepassword">change</a>
+                    <form method="POST" action="">
+                        <input id="changepassword" type="submit" name="passwordChangeRequest" value="change" />
+                    </form>
                 </div>
                 <div class="accountTopic">Picture:</div>
                 <iframe id="accountPicIframe" class="accountEdit" src="/pages/source/editAccountPicture.php" scrolling="no"></iframe>
@@ -177,12 +328,14 @@ require_once(__DIR__ . "/../php/session.php");
                 </div>
                 <div class="accountTopic">Links:</div>
                 <div class="accountEdit" id="accountLinks">
-                    <input type="text" class="inputField" name="steamlink" placeholder="http://steamcommunity.com/id/" value="<? echo getSteamProfile() ?>" />
+                    <input type="text" class="inputField" name="steamlink" placeholder="http://steamcommunity.com/id/" value="<? echo getSteamProfile() ?>" data-lpignore="true" autocomplete="off" />
                 </div>
                 <div class="accountTopic"></div>
                 <div class="accountEdit" id="submitBox">
                     <input class="submitButton" name="submitChanges" type="submit" value="cancel" />
                     <input class="submitButton" name="submitChanges" type="submit" value="save" />
+                    <button class="submitButton" type="button" onclick="toggleDeleteBox()">delete</button>
+                    <span id="errorMessage"><? echo $deleteError ?> </span>
                 </div>
             </div>
           </div>
@@ -190,3 +343,25 @@ require_once(__DIR__ . "/../php/session.php");
     </form>
     </body>
 </htlm>
+<script>
+var deleteBox = document.getElementById("confirmDeleteBox");
+var deleteBoxToggle = false;
+
+function toggleDeleteBox() {
+    if (deleteBoxToggle == true) {
+      console.log("aus");
+      confirmDeleteBox.style.display = "none";
+      deleteBoxToggle = false;
+    } else {
+      deleteBoxToggle = true;
+      console.log("an");
+      confirmDeleteBox.style.display = "inherit";
+    }
+
+}
+
+function toggleChangeRequest(object) {
+    object.style.display = "none";
+}
+
+</script>
