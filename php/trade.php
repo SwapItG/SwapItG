@@ -91,8 +91,8 @@
 		global $pdo;
 		$sql = "INSERT INTO trade_proposal (user_fk, description, game_fk, comment_section_fk) VALUES (:user_id, :description, :game_id, :comment_section_id)";
 		$sth = $pdo->prepare($sql);
-		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
-		$sth->bindParam(":description", htmlspecialchars($description), PDO::PARAM_STR);
+		$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->bindValue(":description", htmlspecialchars($description), PDO::PARAM_STR);
 		$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
 		$sth->bindParam(":comment_section_id", $comment_section_id, PDO::PARAM_INT);
 		$sth->execute();
@@ -104,7 +104,7 @@
 			$sql = "INSERT INTO item_offer (trade_fk, item_fk, count) VALUES (:trade_id, :item_id, :count)";
 			$sth = $pdo->prepare($sql);
 			$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
-			$sth->bindParam(":item_id", create_item($item_offer[$i]["name"], $game_id), PDO::PARAM_INT);
+			$sth->bindValue(":item_id", create_item($item_offer[$i]["name"], $game_id), PDO::PARAM_INT);
 			$sth->bindParam(":count", intval($item_offer[$i]["count"]), PDO::PARAM_INT);
 			$sth->execute();
 			$sql = "SELECT LAST_INSERT_ID() AS id";
@@ -115,7 +115,7 @@
 				$sql = "INSERT INTO item_offer_attribute (item_offer_fk, attribute_fk) VALUES (:item_offer_id, :attribute_id)";
 				$sth = $pdo->prepare($sql);
 				$sth->bindParam(":item_offer_id", $item_id, PDO::PARAM_INT);
-				$sth->bindParam(":attribute_id", create_attribute($item_offer[$i]["attributes"][$j], $game_id), PDO::PARAM_INT);
+				$sth->bindValue(":attribute_id", create_attribute($item_offer[$i]["attributes"][$j], $game_id), PDO::PARAM_INT);
 				$sth->execute();
 			}
 		}
@@ -123,7 +123,7 @@
 			$sql = "INSERT INTO item_demand (trade_fk, item_fk, count) VALUES (:trade_id, :item_id, :count)";
 			$sth = $pdo->prepare($sql);
 			$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
-			$sth->bindParam(":item_id", create_item($item_demand[$i]["name"], $game_id), PDO::PARAM_INT);
+			$sth->bindValue(":item_id", create_item($item_demand[$i]["name"], $game_id), PDO::PARAM_INT);
 			$sth->bindParam(":count", intval($item_demand[$i]["count"]), PDO::PARAM_INT);
 			$sth->execute();
 			$sql = "SELECT LAST_INSERT_ID() AS id";
@@ -134,7 +134,7 @@
 				$sql = "INSERT INTO item_demand_attribute (item_demand_fk, attribute_fk) VALUES (:item_demand_id, :attribute_id)";
 				$sth = $pdo->prepare($sql);
 				$sth->bindParam(":item_demand_id", $item_id, PDO::PARAM_INT);
-				$sth->bindParam(":attribute_id", create_attribute($item_demand[$i]["attributes"][$j], $game_id), PDO::PARAM_INT);
+				$sth->bindValue(":attribute_id", create_attribute($item_demand[$i]["attributes"][$j], $game_id), PDO::PARAM_INT);
 				$sth->execute();
 			}
 		}
@@ -151,7 +151,7 @@
 		global $pdo;
 		$sql = "SELECT id FROM game WHERE REPLACE(name, \" \", \"\") = REPLACE(:name, \" \", \"\")";
 		$sth = $pdo->prepare($sql);
-		$sth->bindParam(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
+		$sth->bindValue(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -160,12 +160,12 @@
 			}
 			$sql = "INSERT INTO game (name) VALUES (:name)";
 	        $sth = $pdo->prepare($sql);
-			$sth->bindParam(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
+			$sth->bindValue(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
 	        $sth->execute();
 
 			$sql = "SELECT id FROM game WHERE REPLACE(name, \" \", \"\") = REPLACE(:name, \" \", \"\")";
 			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
+			$sth->bindValue(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
 			$sth->execute();
 
 			if($sth->rowCount() == 0) {
@@ -189,7 +189,7 @@
 		$sql = "SELECT id FROM item WHERE game_fk = :game_id AND REPLACE(name, \" \", \"\") = REPLACE(:name, \" \", \"\")";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
-		$sth->bindParam(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
+		$sth->bindValue(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -209,13 +209,13 @@
 			$sql = "INSERT INTO item (game_fk, name) VALUES (:game_id, :name)";
 	        $sth = $pdo->prepare($sql);
 			$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
-			$sth->bindParam(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
+			$sth->bindValue(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
 	        $sth->execute();
 
 			$sql = "SELECT id FROM item WHERE game_fk = :game_id AND REPLACE(name, \" \", \"\") = REPLACE(:name, \" \", \"\")";
 			$sth = $pdo->prepare($sql);
 			$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
-			$sth->bindParam(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
+			$sth->bindValue(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
 			$sth->execute();
 
 			if($sth->rowCount() == 0) {
@@ -239,7 +239,7 @@
 		$sql = "SELECT id FROM attribute WHERE game_fk = :game_id AND REPLACE(name, \" \", \"\") = REPLACE(:name, \" \", \"\")";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
-		$sth->bindParam(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
+		$sth->bindValue(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -259,13 +259,13 @@
 			$sql = "INSERT INTO attribute (game_fk, name) VALUES (:game_id, :name)";
 	        $sth = $pdo->prepare($sql);
 			$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
-			$sth->bindParam(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
+			$sth->bindValue(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
 	        $sth->execute();
 
 			$sql = "SELECT id FROM attribute WHERE game_fk = :game_id AND REPLACE(name, \" \", \"\") = REPLACE(:name, \" \", \"\")";
 			$sth = $pdo->prepare($sql);
 			$sth->bindParam(":game_id", $game_id, PDO::PARAM_INT);
-			$sth->bindParam(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
+			$sth->bindValue(":name", trim(htmlspecialchars($name)), PDO::PARAM_STR);
 			$sth->execute();
 
 			if($sth->rowCount() == 0) {
@@ -289,7 +289,7 @@
 		$sql = "SELECT comment_section_fk FROM trade_proposal WHERE id = :id AND user_fk = :user_id";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":id", $trade_id, PDO::PARAM_INT);
-		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -353,7 +353,7 @@
 		$sql = "SELECT comment_section_fk FROM trade_proposal WHERE id = :id AND user_fk = :user_id";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":id", $old_trade_id, PDO::PARAM_INT);
-		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -603,7 +603,7 @@
 		$sql = "SELECT comment_section_fk FROM trade_proposal WHERE id = :trade_id AND user_fk = :user_id";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":trade_id", $trade_id, PDO::PARAM_INT);
-		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
 		$sth->execute();
 		if($sth->rowCount() != 0) {
 			set_status_comment_section($sth->fetch()["comment_section_fk"], $status);
@@ -622,7 +622,7 @@
 		$sql = "SELECT id FROM trade_proposal WHERE id = :id AND user_fk = :user_id";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":id", $trade_id, PDO::PARAM_INT);
-		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {

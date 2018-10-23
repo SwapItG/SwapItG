@@ -63,7 +63,7 @@
 		$sql = "SELECT id FROM comment WHERE comment_section_fk = :comment_section_id AND user_fk = :user_id";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":comment_section_id", $comment_section_id, PDO::PARAM_INT);
-		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -72,7 +72,7 @@
 			$sth->bindParam(":comment_section_id", $comment_section_id, PDO::PARAM_INT);
 			$sth->bindParam(":rating", $rating, PDO::PARAM_INT);
 			$sth->bindParam(":reason", $reason, PDO::PARAM_STR);
-			$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+			$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
 			$sth->execute();
 			return 0;
 		} else {
@@ -81,7 +81,7 @@
 			$sth->bindParam(":comment_section_id", $comment_section_id, PDO::PARAM_INT);
 			$sth->bindParam(":rating", $rating, PDO::PARAM_INT);
 			$sth->bindParam(":reason", $reason, PDO::PARAM_STR);
-			$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+			$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
 			$sth->execute();
 			return 0;
 		}
@@ -104,7 +104,7 @@
 		$sql = "SELECT id FROM comment WHERE comment_section_fk = :comment_section_id AND user_fk = :user_id";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":comment_section_id", $comment_section_id, PDO::PARAM_INT);
-		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
 		$sth->execute();
 
 		if($sth->rowCount() == 0) {
@@ -128,7 +128,7 @@
 		$sql = "SELECT id AS comment_id, rating, reason FROM comment WHERE comment_section_fk = :comment_section_id AND user_fk = :user_id";
 		$sth = $pdo->prepare($sql);
 		$sth->bindParam(":comment_section_id", $comment_section_id, PDO::PARAM_INT);
-		$sth->bindParam(":user_id", logedin(), PDO::PARAM_INT);
+		$sth->bindValue(":user_id", logedin(), PDO::PARAM_INT);
 		$sth->execute();
 		$result = $sth->fetch(PDO::FETCH_ASSOC);
 		if($result == false) {

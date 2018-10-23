@@ -11,7 +11,7 @@
 
 			$sql = "SELECT email FROM user WHERE id = :id";
 			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+			$sth->bindValue(":id", logedin(), PDO::PARAM_INT);
 			$sth->execute();
 			if($orginal) {
 				return $sth->fetch()["email"];
@@ -50,8 +50,8 @@
 				global $pdo;
 				$sql = "UPDATE user SET name = :name WHERE id = :id";
 				$sth = $pdo->prepare($sql);
-				$sth->bindParam(":name", htmlspecialchars($name), PDO::PARAM_STR);
-				$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+				$sth->bindValue(":name", htmlspecialchars($name), PDO::PARAM_STR);
+				$sth->bindValue(":id", logedin(), PDO::PARAM_INT);
 				$sth->execute();
 			}
 			return true;
@@ -89,8 +89,8 @@
 				global $pdo;
 				$sql = "UPDATE user SET steam_id = :steam_id  WHERE id = :id";
 				$sth = $pdo->prepare($sql);
-				$sth->bindParam(":steam_id", htmlspecialchars($profile_link), PDO::PARAM_STR);
-				$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+				$sth->bindValue(":steam_id", htmlspecialchars($profile_link), PDO::PARAM_STR);
+				$sth->bindValue(":id", logedin(), PDO::PARAM_INT);
 				$sth->execute();
 			}
 			return true;
@@ -145,8 +145,8 @@
 
 			$sql = "UPDATE user SET image = :image  WHERE id = :id";
 			$sth = $pdo->prepare($sql);
-			$sth->bindParam(":image", file_get_contents($_FILES[$post_name]["tmp_name"]), PDO::PARAM_STR);
-			$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+			$sth->bindValue(":image", file_get_contents($_FILES[$post_name]["tmp_name"]), PDO::PARAM_STR);
+			$sth->bindValue(":id", logedin(), PDO::PARAM_INT);
 			$sth->execute();
 			return 0;
 		} else {
@@ -183,8 +183,8 @@
 				global $pdo;
 				$sql = "UPDATE user SET info = :info  WHERE id = :id";
 				$sth = $pdo->prepare($sql);
-				$sth->bindParam(":info", htmlspecialchars($info), PDO::PARAM_STR);
-				$sth->bindParam(":id", logedin(), PDO::PARAM_INT);
+				$sth->bindValue(":info", htmlspecialchars($info), PDO::PARAM_STR);
+				$sth->bindValue(":id", logedin(), PDO::PARAM_INT);
 				$sth->execute();
 			}
 			return true;
