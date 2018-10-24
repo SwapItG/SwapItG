@@ -1,4 +1,4 @@
-<?
+<?php
   require_once(__DIR__ . "/../php/userdata_get_set.php");
   require_once(__DIR__ . "/../php/session.php");
   require_once(__DIR__ . "/../php/register_login.php");
@@ -28,6 +28,32 @@
   }
   if ($_POST["passwordChangeRequest"] == "change") {
     $passwRequestResult = password_change(getEmail());
+  }
+  if ($_POST["submitPasswordChange"] == "change") {
+      $passwRequestResult = password_change_login(getEmail(),$_POST["changePasswordConfirm"],$_GET["c"]);
+      echo $passwRequestResult;
+      if ($passwRequestResult == 0) {
+        unset($_POST);
+        echo '
+        <div onclick="toggleChangeRequest(this)" style="display:inherit" id="confirmDeleteBox" class="changeRequestDiv">
+            <div id="areYouSure">
+                <p style="color:#F44" id="areYouSureQuestion">password change successful!</p>
+                <button id="confirmPasswordRequest" class="submitButton">continue</button>
+            </div>
+        </div>';
+      }
+  }
+  if($_GET["cpr"] == 1) {
+    echo '
+    <div style="display:inherit" id="confirmDeleteBox" class="changeRequestDiv">
+        <div id="areYouSure">
+            <form method="POST" action="https://swapitg.com/editAccount?c='.$_GET["c"].'">
+                <p style="color:#F44;font-size:16px" id="areYouSureQuestion">password change request</p>
+                <input data-lpignore="true" autocomplete="off" class="deletePasswortInputField" type="password" name="changePasswordConfirm" placeholder="continue with password" /><br><br>
+                <input type="submit" name="submitPasswordChange" id="confirmPasswordChange" class="submitButton" value="change"></input>
+            </form>
+        </div>
+    </div>';
   }
 
   $deleteError;
@@ -276,7 +302,7 @@
           }
       }
     </style>
-    </head>
+  </head>
     <body>
       <!-- Box for Account Deletion -->
       <div  id="confirmDeleteBox">

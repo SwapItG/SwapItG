@@ -1,4 +1,3 @@
 <?php
-	require_once(__DIR__ . "/../php/register_login.php");
-	echo(password_change_login("willi.weissnegger@gmail.com", "password", $_GET["c"]));
+  header('Location: https://swapitg.com/editAccount?c='.$_GET["c"].'&cpr=1');
 ?>
