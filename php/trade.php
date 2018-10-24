@@ -28,7 +28,7 @@
 			if(empty($item_offer[$i]) || !is_array($item_offer[$i])) {
 				return 2;
 			}
-			if(empty($item_offer[$i]["name"]) || is_array($item_offer[$i]["name"]) || empty($item_offer[$i]["count"]) || !is_numeric($item_offer[$i]["count"]) || empty($item_offer[$i]["attributes"]) || !is_array($item_offer[$i]["attributes"])) {
+			if(empty($item_offer[$i]["name"]) || is_array($item_offer[$i]["name"]) || empty($item_offer[$i]["count"]) || !is_numeric($item_offer[$i]["count"]) || is_null($item_offer[$i]["attributes"]) || !is_array($item_offer[$i]["attributes"])) {
 				return 2;
 			}
 			if(strlen($item_offer[$i]["name"]) > 32) {
@@ -57,7 +57,7 @@
 			if(empty($item_demand[$i]) || !is_array($item_demand[$i])) {
 				return 2;
 			}
-			if(empty($item_demand[$i]["name"]) || is_array($item_demand[$i]["name"]) || empty($item_demand[$i]["count"]) || !is_numeric($item_demand[$i]["count"]) || empty($item_demand[$i]["attributes"]) || !is_array($item_demand[$i]["attributes"])) {
+			if(empty($item_demand[$i]["name"]) || is_array($item_demand[$i]["name"]) || empty($item_demand[$i]["count"]) || !is_numeric($item_demand[$i]["count"]) || is_null($item_demand[$i]["attributes"]) || !is_array($item_demand[$i]["attributes"])) {
 				return 2;
 			}
 			if(strlen($item_demand[$i]["name"]) > 32) {
