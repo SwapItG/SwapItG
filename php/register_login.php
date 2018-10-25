@@ -341,9 +341,6 @@
 		$sth->bindParam(":password_hash", $password_hash, PDO::PARAM_STR);
 		$sth->bindParam(":id", $id, PDO::PARAM_INT);
 		$sth->execute();
-
-		login($email, $password);
-		header("Location: https://swapitg.com");
 		return 0;
 	}
 

@@ -2,4 +2,5 @@ webalizer
 .ftpconfig
 .ftpignore
 php/db_config.php
+php/steam_config.php
 wilhelm.todo
