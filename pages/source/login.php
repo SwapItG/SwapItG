@@ -21,7 +21,7 @@
               <span class="nav-link-correction navItemAlign">
                   <div id="profileCollapseMenu">
                       <ul style="list-style-type: none;">
-                          <li class="collapseMenuLinks"><a class="navSubLink" href="account.php">new trade</a></li>
+                          <li class="collapseMenuLinks"><a class="navSubLink" href="https://swapitg.com/createTrade">new trade</a></li>
                           </li>
                           <li class="collapseMenuLinks"><a class="navSubLink" href="https://swapitg.com/account">account</a></li>
                           </li>
@@ -49,14 +49,6 @@
     <head>
     <link rel="stylesheet" href="../../../assets/css/global_var.css">
         <style type="text/css">
-            ::-webkit-input-placeholder { /* Chrome */
-              color: var(--skyblue);
-              opacity: 1;
-            }
-            ::-moz-placeholder { /* Firefox 19+ */
-              color: var(--skyblue);
-              opacity: 1;
-            }
             :root {
               --header-height:75px;
               --form-height:20px;
@@ -188,7 +180,7 @@
                       margin-left:17px;
                   }
                   #loginContainer {
-                      top:165px;
+                      top:calc(var(--header-height) * 1.75);
                       padding-left:10px;
                   }
                   profileCollapseMenu li {

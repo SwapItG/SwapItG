@@ -1,5 +1,6 @@
 <?php
-	//usage: <a href="https://swapitg.com/logout/<?php setToken(); echo(getToken()); ... OR
+	//usage: <a href="https://swapitg.com/logout/<?php setToken(); echo(getToken()); ...
+	//OR
 	//usage: <input type="hidden" value="<?php setToken(); echo(getToken()); ...
 	require_once(__DIR__ . "/../php/session.php");
 

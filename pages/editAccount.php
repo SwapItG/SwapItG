@@ -1,7 +1,28 @@
 <?php
-  require_once(__DIR__ . "/../php/userdata_get_set.php");
-  require_once(__DIR__ . "/../php/session.php");
-  require_once(__DIR__ . "/../php/register_login.php");
+  require_once($_SERVER['DOCUMENT_ROOT'] . "/php/userdata_get_set.php");
+  require_once($_SERVER['DOCUMENT_ROOT'] . "/php/session.php");
+  require_once($_SERVER['DOCUMENT_ROOT'] . "/php/register_login.php");
+
+  $error01 = error01($_GET["error01"]);
+  $error02;
+  $error03;
+
+  $set_new_password_success_window = '
+    <form method="POST" action="https://swapitg.com/editAccount">
+      <div style="display:inherit" class="notificationBoxBackground" class="changeRequestDiv">
+          <div class="notificationBox">
+              <p style="color:#0A0" class="notificationboxQuestion">password change successful!</p>
+              <input type="submit" id="confirmPasswordRequest" class="submitButton" value="continue" />
+          </div>
+      </div>
+    </form>';
+  $send_mail_password_change_result_window = '
+    <div onclick="toggleChangeRequest(this)" style="display:inherit" class="notificationBoxBackground" class="changeRequestDiv">
+        <div class="notificationBox"">
+            <p style="color:#F44" class="notificationboxQuestion">'.error02($error02).'</p>
+            <button id="confirmPasswordRequest" class="submitButton saveButton"><i class="fas fa-envelope"></i> OKAY</button>
+        </div>
+    </div>';
 
   if (empty(logedin())) {
       unset($_POST);
@@ -23,311 +44,138 @@
         header('Location: https://swapitg.com');
       } else {
         unset($_POST);
-        header('Location: https://swapitg.com/editAccount?error='.$result);
+        header('Location: https://swapitg.com/editAccount?error01='.$result);
       }
   }
-  if ($_POST["passwordChangeRequest"] == "change") {
-    $passwRequestResult = password_change(getEmail());
+  if ($_POST["passwordChangeRequest"] == "change") { // sends an email password change request
+      $error02 = password_change(getEmail());
   }
-  if ($_POST["submitPasswordChange"] == "change") {
-      $passwRequestResult = password_change_login(getEmail(),$_POST["changePasswordConfirm"],$_GET["c"]);
-      echo $passwRequestResult;
-      if ($passwRequestResult == 0) {
-        unset($_POST);
-        echo '
-        <div onclick="toggleChangeRequest(this)" style="display:inherit" id="confirmDeleteBox" class="changeRequestDiv">
-            <div id="areYouSure">
-                <p style="color:#F44" id="areYouSureQuestion">password change successful!</p>
-                <button id="confirmPasswordRequest" class="submitButton">continue</button>
+  if ($_POST["submitPasswordChange"] == "change" || $_GET["cpr"] == 1) { // password reset
+      $error03 = password_change_login(getEmail(),$_POST["changePasswordConfirm"],$_GET["c"]);
+      $set_new_password_submit_window = '
+        <div style="display:inherit" class="notificationBoxBackground" class="changeRequestDiv">
+            <div class="notificationBox">
+                <form method="POST" action="https://swapitg.com/editAccount?c='.$_GET["c"].'">
+                    <p style="font-size:17px" class="notificationboxQuestion">password change request</p>
+                    <input data-lpignore="true" autocomplete="off" class="deletePasswortInputField" type="password" name="changePasswordConfirm" placeholder="new password" /><br>
+                    <span class="error">'.error03($error03).'</span>
+                    <br>
+                    <button type="submit" name="submitPasswordChange" id="confirmPasswordChange" class="submitButton saveButton" value="change">
+                    <i class="fas fa-exchange-alt"></i> CHANGE</button>
+                    <label id="exitPasswordChange" style="width:150px">
+                    <img id="cancelPasswordChangeIMG" alt="" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Deletion_icon.svg/240px-Deletion_icon.svg.png">
+                    <input id="cancelPasswordChangeButton" type="submit" name="submitPasswordChange" value="cancel" />
+                    </label>
+                </form>
             </div>
         </div>';
+      if ($error03 == 0) {
+        unset($_POST);
+    		header("Location: https://swapitg.com/editAccount?cpr=2");
+      } else {
+        echo $set_new_password_submit_window;
       }
-  }
-  if($_GET["cpr"] == 1) {
-    echo '
-    <div style="display:inherit" id="confirmDeleteBox" class="changeRequestDiv">
-        <div id="areYouSure">
-            <form method="POST" action="https://swapitg.com/editAccount?c='.$_GET["c"].'">
-                <p style="color:#F44;font-size:16px" id="areYouSureQuestion">password change request</p>
-                <input data-lpignore="true" autocomplete="off" class="deletePasswortInputField" type="password" name="changePasswordConfirm" placeholder="continue with password" /><br><br>
-                <input type="submit" name="submitPasswordChange" id="confirmPasswordChange" class="submitButton" value="change"></input>
-            </form>
-        </div>
-    </div>';
+  } else if ($_POST["submitPasswordChange"] == "cancel" || $_GET["cpr"] == 1) {
+    unset($_POST);
+    unset($_GET);
+    header('Location: https://swapitg.com/editAccount');
+  } else if ($_GET["cpr"] == 2) {
+      echo $set_new_password_success_window;
   }
 
-  $deleteError;
-  switch ($_GET["error"]) {
-      case 1:
-        $deleteError = "You must be logged in to perform that action!";
-        break;
+### Error Message Outputter ####################################
+  function error01($error) { // error for deleting account
+    switch ($error) {
+        case 1:
+          $error = "You must be logged in to perform that action!";
+          break;
 
-      case 2:
-        $deleteError = "Some parameters are empty!";
-        break;
+        case 2:
+          $error = "Some parameters are empty!";
+          break;
 
-      case 3:
-        $deleteError = "Used Email is wrong!";
-        break;
+        case 3:
+          $error = "Used Email is wrong!";
+          break;
 
-      case 4:
-        $deleteError = "password incorrect!";
-        break;
-
+        case 4:
+          $error = "password incorrect!";
+          break;
+    }
+    return $error;
   }
-  switch ($passwRequestResult) {
-      case 0:
-        $passwRequestResult = "We sent you an email change Request.<br>Check your mails!";
-        break;
+  function error02($error) { // error for sending an email password change request
+    switch ($error) {
+        case 0:
+          $error = "We sent you an email change Request.<br>Check your mails!";
+          break;
 
-      case 1:
-        $passwRequestResult = "Your Email couldn't be found!";
-        break;
+        case 1:
+          $error = "Your Email couldn't be found!";
+          break;
 
-      case 2:
-        $passwRequestResult = "This account doesn't exist!";
-        break;
+        case 2:
+          $error = "This account doesn't exist!";
+          break;
 
-      case 3:
-        $passwRequestResult = "There was an error with our email server. Please try again later!";
-        break;
+        case 3:
+          $error = "There was an error with our email server. Please try again later!";
+          break;
+    }
+    return $error;
   }
+  function error03($error) { // error for setting new password
+    if ($_GET["cpr"] == 1) {
+      return "";
+    }
+    switch ($error) {
+        case 1:
+          $error = "password must not be empty!";
+          break;
+
+        case 2:
+          $error = "verification-code time passed";
+          break;
+
+        case 3:
+          $error = "password doesn't meet our requirements";
+          break;
+    }
+    return $error;
+  }
+### ENDE ########################################
 ?>
+
 <?php include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php") ?>
 <html>
   <head>
+    <title>SwapitG <?PHP echo getName()?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwapG Edit-Account</title>
+    <link rel="preload" href="/assets/css/editAccount.css" as="style">
+    <link rel="stylesheet" href="/assets/css/editAccount.css">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <style type="text/css">
-      ::-webkit-input-placeholder { /* Chrome */
-        color: var(--light-orange);
-        opacity: 1;
-      }
-      ::-moz-placeholder { /* Firefox 19+ */
-        color: var(--light-orange);
-        opacity: 1;
-      }
-      :root {
-          --pic-size:50px;
-          --frame-size:54px;
-          --default-width:300px;
-      }
-      body {
-        background-color:#444;
-        height:100%;
-        color:#DDD;
-      }
-      #confirmDeleteBox {
-        position:absolute;
-        background-color:rgba(0,0,0,0.5);
-        width:100%;
-        height:calc(100vh - 97px);
-        top:97px;
-        text-align: center;
-        display:none;
-      }
-      #areYouSure {
-        position:absolute;
-        background-color:rgba(235,235,235,1);
-        width:400px;
-        height:200px;
-        top:calc(50% - (200px / 2) - 100px);
-        text-align: center;
-        display:inherit;
-        left:calc(50% - 400px / 2);
-        padding-top:60px;
-        border-radius:4px;
-      }
-      #areYouSureQuestion {
-        color:black;
-        margin-top:-25px;
-      }
-      #accountDisplay {
-          overflow-x: hidden;
-          overflow-y: hidden;
-      }
-      #background {
-        position:absolute;
-        display:inline-block;
-        background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAMklEQVQYlWNgYGAwZkAFxjjEcApgSOKTIGgSVpOxKcKqmGiFRFuNUwCHGFaT8erCGuAAtV8HLQ/j6goAAAAASUVORK5CYII=);
-        background-color:rgba(0,0,0,0.35);
-        min-height: 100%; /* Mindesthöhe auf 100 % (bei modernen Browsern) */
-        height: auto !important; /* important Behel (bei modernen Browsern */
-        height: 100%;
-        width:100%;
-        z-index:-1;
-        overflow-y: hidden;
-      }
-      #accountInfoBox {
-          margin:auto;
-          width: 800px;
-          background-color:#333338;
-          border-radius:3px;
-          overflow-x:hidden;
-          box-shadow:inset 0px 0px 5px #000;
-      }
-      #accountEditBox {
-          margin:auto;
-          width: 1000px;
-          display: flex;
-          flex-flow: row wrap;
-          padding-top:25px;
-      }
-      #errorMessage {
-        color:#F44;
-        font-size:13px;
-        font-family:sans-serif;
-        padding-left:10px;
-      }
-      .deletePasswortInputField {
-        font-family:sans-serif;
-        width:250px;
-        font-size:14px;
-        border-radius:2px;
-        background-color:rgba(50,50,50,1);
-        padding-left:10px;
-        height:30px;
-        color:var(--lightweight-orange);
-      }
-      .cancelButton {
-          background-color:rgba(144, 144, 144, 1);
-          border:none;
-      }
-      .cancelButton:hover {
-          background-color:rgba(120, 117, 117, 1) !important;
-      }
-      .confirmButton {
-          background-color:var(--lightweight-orange);
-      }
-      .confirmButton:hover {
-          background-color:var(--lightweight-orange-hover) !important;
-      }
-      .accountEdit {
-          width:85%;
-          margin-top:25px;
-      }
-      .accountTopic {
-          width:15%;
-          padding-right:20px;
-          margin-top:25px;
-          text-align: right;
-          font-variant: small-caps;
-          font-size:15px;
-      }
-      #submitBox {
-          text-align:left;
-          margin-bottom:40px;
-      }
-      #accountPicIframe {
-          height:140px;
-          border:none;
-      }
-      #accountInfoArea {
-          width:var(--default-width);
-          height:100px;
-          font-size:13px;
-          padding-left:5px;
-      }
-      .inputField {
-          width:var(--default-width);
-          font-size:13px;
-          font-family:arial;
-          padding-left:5px;
-      }
-      .submitButton {
-          width:100px;
-          height:35px;
-          border:none;
-          border-radius:1px;
-      }
-      .submitButton:hover {
-        border-bottom:solid;
-        border-bottom-color:#333;
-        background-color:#CCC;
-        height:38px;
-        cursor:pointer;
-      }
-      #mail {
-          color:grey;
-          font-family:serif;
-          font-size:14px;
-          letter-spacing: 1px;
-      }
-      #password {
-          color:grey;
-      }
-      #changepassword {
-          color:#F55;
-          font-family:serif;
-          font-size:12px;
-          letter-spacing: 1px;
-          background-color:rgba(0,0,0,0);
-          border:none;
-      }
-      #changepassword:hover {
-          color:#99F;
-          text-decoration: underline;
-          cursor:pointer;
-      }
-      @media only screen and (max-width: 767px) {
-          #accountInfoBox {
-              width:600px;
-          }
-          #accountDisplay {
-              width:100%;
-          }
-          #accountInfoBox {
-              width:600px;
-          }
-          #settingsDisplay {
-              width:100%;
-              height:100px;
-              font-size:15px;
-              font-display:block;
-          }
-      }
-      @media only screen and (max-width: 550px) {
-          .accountEdit {
-              width:100%;
-              margin-left:25px;
-              margin-top:5px;
-          }
-          .accountTopic {
-              width:15%;
-              text-align:left;
-          }
-          #accountEditBox {
-            margin-left:10px;
-          }
-      }
     </style>
   </head>
-    <body>
-      <!-- Box for Account Deletion -->
-      <div  id="confirmDeleteBox">
-          <div id="areYouSure">
-              <p id="areYouSureQuestion"> Do you want to delete your account ? </p>
-              <form method="POST" action="">
-                  <input data-lpignore="true" autocomplete="off" class="deletePasswortInputField" type="password" name="deletePasswortConfirm" placeholder="continue with password" /><br><br>
-                  <input class="submitButton confirmButton" name="deleteAccount" type="submit" value="confirm" />
-                  <button class="submitButton cancelButton" type="button" onclick="toggleDeleteBox()">cancel</button>
-              </form>
-          </div>
+  <body>
+    <!-- Box for Account Deletion -->
+    <div id="deletebox" class="notificationBoxBackground">
+        <div class="notificationBox">
+            <p class="notificationboxQuestion"> Do you want to delete your account ? </p>
+            <form method="POST" action="">
+                <input data-lpignore="true" autocomplete="off" class="deletePasswortInputField" type="password" name="deletePasswortConfirm" placeholder="continue with password" /><br><br>
+                <button class="submitButton deleteButton" name="deleteAccount" type="submit" value="confirm"><i class="fas fa-times"></i> DELETE</button>
+                <button class="submitButton cancelButton" type="button" onclick="toggleDeleteBox()"><i class="fas fa-angle-right"></i> CANCEL</button>
+            </form>
+        </div>
       </div>
-      <?
-      if ($_POST["passwordChangeRequest"] == "change") {
-          echo '
-          <div onclick="toggleChangeRequest(this)" style="display:inherit" id="confirmDeleteBox" class="changeRequestDiv">
-              <div id="areYouSure">
-                  <p style="color:#F44" id="areYouSureQuestion">'.$passwRequestResult.'</p>
-                  <button id="confirmPasswordRequest" class="submitButton">OKAY</button>
-              </div>
-          </div>';
-      }
-      ?>
-      <!-- <div id="background"></div> -->
-      <form method="POST" action="">
+      <?PHP
+        if ($_POST["passwordChangeRequest"] == "change") { // email password change request dialog output result
+            echo $send_mail_password_change_result_window;
+        }?>
+    <form method="POST" action="">
         <div id="accountDisplay">
           <div id="accountInfoBox">
             <div id="accountEditBox">
@@ -337,11 +185,11 @@
                 </div>
                 <div class="accountTopic">Email:</div>
                 <div class="accountEdit" id="accountMail">
-                    <span id="mail"><? echo getEMail(); ?></span>
+                    <span id="mail"><?PHP echo getEMail(); ?></span>
                 </div>
                 <div class="accountTopic">Password:</div>
                 <div class="accountEdit" id="accountPassw">
-                    <span id="password"><? echo "********" ?></span>
+                    <span id="password"><?PHP echo "********" ?></span>
                     <form method="POST" action="">
                         <input id="changepassword" type="submit" name="passwordChangeRequest" value="change" />
                     </form>
@@ -350,44 +198,43 @@
                 <iframe id="accountPicIframe" class="accountEdit" src="/pages/source/editAccountPicture.php" scrolling="no"></iframe>
                 <div class="accountTopic">Description:</div>
                 <div class="accountEdit" id="accountInfo">
-                    <textarea placeholder="your personal impressum" id="accountInfoArea" name="info"><? echo getInfo() ?></textarea>
+                    <textarea placeholder="your personal impressum" id="accountInfoArea" name="info"><?PHP echo getInfo() ?></textarea>
                 </div>
                 <div class="accountTopic">Links:</div>
                 <div class="accountEdit" id="accountLinks">
-                    <input type="text" class="inputField" name="steamlink" placeholder="http://steamcommunity.com/id/" value="<? echo getSteamProfile() ?>" data-lpignore="true" autocomplete="off" />
+                    <input type="text" class="inputField" name="steamlink" placeholder="http://steamcommunity.com/id/" value="<?PHP echo getSteamProfile() ?>" data-lpignore="true" autocomplete="off" />
                 </div>
                 <div class="accountTopic"></div>
                 <div class="accountEdit" id="submitBox">
-                    <input class="submitButton" name="submitChanges" type="submit" value="cancel" />
-                    <input class="submitButton" name="submitChanges" type="submit" value="save" />
-                    <button class="submitButton" type="button" onclick="toggleDeleteBox()">delete</button>
-                    <span id="errorMessage"><? echo $deleteError ?> </span>
+                    <button class="submitButton saveButton" name="submitChanges" type="submit" value="save"><i class="fas fa-check"></i> SAVE</button>
+                    <button class="submitButton deleteButton" type="button" onclick="toggleDeleteBox()"><i class="fas fa-times"></i> DELETE</button>
+                    <button class="submitButton cancelButton" name="submitChanges" type="submit" value="cancel">
+                    <i class="fas fa-angle-right"></i> CANCEL</button>
+                    <br><span class="error"><?PHP echo $error01 ?> </span>
                 </div>
             </div>
           </div>
       </div>
     </form>
-    </body>
+  </body>
 </htlm>
-<script>
-var deleteBox = document.getElementById("confirmDeleteBox");
-var deleteBoxToggle = false;
+<script type="text/javascript">
+  var deletebox = document.getElementById("deletebox");
+  var deleteBoxToggle = false;
 
-function toggleDeleteBox() {
-    if (deleteBoxToggle == true) {
-      console.log("aus");
-      confirmDeleteBox.style.display = "none";
-      deleteBoxToggle = false;
-    } else {
-      deleteBoxToggle = true;
-      console.log("an");
-      confirmDeleteBox.style.display = "inherit";
-    }
+  function toggleDeleteBox() {
+      if (deleteBoxToggle == true) {
+        deletebox.style.display = "none";
+        deleteBoxToggle = false;
+      } else {
+        deleteBoxToggle = true;
+        deletebox.style.display = "inherit";
+      }
 
-}
+  }
 
-function toggleChangeRequest(object) {
-    object.style.display = "none";
-}
+  function toggleChangeRequest(object) {
+      object.style.display = "none";
+  }
 
 </script>

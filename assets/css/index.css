@@ -1,0 +1,159 @@
+body {
+  background-color:var(--middle-black)!important;
+  color:#fff!important
+}
+.contentUserPostHeaderTable {
+  border-collapse:collapse;
+  border-width:1px;
+  min-width:400px;
+  border-spacing:0;
+}
+.contentUserPostHeaderTable th {
+  width:16.6%;
+  text-align:center;
+  border-width:1px;
+}
+.userPost {
+
+}
+.userPostDIV {
+  margin-bottom:10px;
+  margin-top:10px;
+  background-color: rgba(255,255,255,0.05);
+}
+.userPostDescriptionArea {
+  width:100%;
+  float:left;
+  padding-left:10px;
+  height:30px;
+  background-color:rgba(255,255,255,0.1);
+  border:none;
+  color:#DDD;
+}
+.contentUserPostTable {
+  border-collapse:collapse;
+  height:100px;
+  border-radius:4px;
+  margin-bottom:15px
+}
+.contentUserPostTable td {
+  border:none;
+  border-width:1px;
+  text-align:center;
+  border-spacing:0;
+  padding:5px;
+  width:300px;
+}
+.item_table {
+  width:500px;
+  background-color:rgba(255,255,255,0.25);
+  border-collapse:collapse;
+}
+.item_table td {
+  min-width:125px;
+  border:solid;
+  border-width:1px;
+  border-color:#000;
+  font-size:12px;
+}
+.item_table th {
+  background-color:rgba(0,0,0,0.35);
+}
+.contentUserPostHeaderTrade {
+  border-bottom:solid;
+  border-bottom-width:thin;
+  border-color:#666;
+  border-bottom-style: dashed;
+}
+.contentUserPostTime {
+  text-align:right !important;
+  font-size:12px;
+  color:#48cdeb;
+}
+.contentUserPostHeaderTrade td {
+
+}
+.contentUserPostDIV {
+  overflow-x:auto
+}
+.contentUserPostNameDIV {
+  color:orange;
+  font-size:13px;
+  width:100px !important;
+}
+.contentUserPostHeaderTradeGame {
+  text-align:left !important;
+  padding-left:25px !important;
+  font-size:13px;
+}
+.contentUserPostHeaderTrade {
+  width:100%;
+  height:100%;
+}
+.contentUserPostHeaderTrade td {
+  height:100%;
+}
+.paginationDiv {
+  border:none;
+  text-align:center;
+  width:100%
+}
+#contentHeader th {
+  height:35px
+}
+.contentHeaderSticky {
+  position:fixed;
+  top:0;
+  width:100%
+}
+.disabledPaginationButton {
+  filter:saturate(0%);
+}
+.enabledPaginationButton {
+  filter:hue-rotate(270deg) saturate(100%);
+}
+.enabledPaginationButton,.disabledPaginationButton {
+  margin-left:5px;
+  margin-right:5px;
+  border:solid;
+  border-style:double;
+  border-width:2px;
+  border-radius: 4px;
+}
+.paginationIcon {
+  background-repeat: no-repeat;
+  background-size: 12px;
+  background-position: center;
+  height:25px;
+  width:25px;
+  display:block;
+  filter:sepia(100%) brightness(50%) saturate(400%);
+}
+.gameIcon {
+  width:13px;
+}
+.userIMG {
+  width:25px;
+  height:25px;
+  border-radius:3px;
+  float:left;
+}
+.userName {
+  float:left;
+  margin-left:10px;
+}
+.enabledPaginationButton:hover {
+  cursor:pointer;
+  filter:invert(100%) hue-rotate(90deg) brightness(200%);
+  border-style: dashed;
+}
+#right-arrow {
+  background-image:url("/assets/img/icons/hard_edge_arrow.svg");
+  transform:rotateZ(180deg);
+}
+#left-arrow {
+  background-image:url("/assets/img/icons/hard_edge_arrow.svg");
+}
+#double-arrow {
+  background-image:url("/assets/img/icons/double-arrow.svg");
+}

@@ -1,4 +1,5 @@
 <?php
+	//loads all items for a specified game and returns them as an json array
 	require_once(__DIR__ . "/../php/db_connect.php");
 	$sql = "SELECT id, name FROM item WHERE game_fk = :game_id ORDER BY name ASC";
 	$sth = $pdo->prepare($sql);

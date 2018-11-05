@@ -1,4 +1,5 @@
 <?php
+	//loads all games and returns them as an json array
 	require_once(__DIR__ . "/../php/db_connect.php");
 	$sql = "SELECT id, name, icon_path FROM game ORDER BY name ASC";
 	$sth = $pdo->prepare($sql);

@@ -5,7 +5,6 @@ require_once(__DIR__ . "../../../php/session.php");
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Swapit</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="17Ia-Aotx4mQG7ayi2W9l97hAJcgF8GB9FCrU34zdA0" />
@@ -18,6 +17,7 @@ require_once(__DIR__ . "../../../php/session.php");
         .navbar {
             box-shadow: 0px 3px 3px rgba(0,0,0,0.5);
             background-color:var(--light-black) !important;
+            z-index:1 !important;
         }
     </style>
 </head>

@@ -4,6 +4,7 @@
 	require_once(__DIR__ . "/session.php");
 	require_once(__DIR__ . "/steam_config.php");
 
+	//generates an image with an link
 	function steam_loginbutton($buttonstyle = "square") {
 		$button['rectangle'] = "01";
 		$button['square'] = "02";
@@ -12,6 +13,7 @@
 		echo($button);
 	}
 
+	//checks if the steam id is set for the given/logedin user
 	function steam_logedin($user_id = -1) {
 		if(logedin() || $user_id != -1) {
 			global $pdo;
@@ -30,11 +32,17 @@
 
 	//returns array("name" => "steam user name", "profile_url" => "steam profile url")
 	function get_steam_data($user_id = -1) {
+		//login/parameter check
 		if(logedin() || $user_id != -1) {
+			//get steam id
 			$steam_id = steam_logedin($user_id);
+			//check if steam id is set for given/logedin user
 			if(!empty($steam_id)) {
+				//get apikey
 				global $steamauth;
+				//get info about user from steam
 				$url = file_get_contents("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=".$steamauth['apikey']."&steamids=".$steam_id);
+				//get the values out of the json string
 				$content = json_decode($url, true);
 				$result = array();
 				$result["name"] = $content['response']['players'][0]['personaname'];
@@ -48,6 +56,7 @@
 		}
 	}
 
+	//unset the steam id of the logedin user
 	function steam_logout() {
 		if(steam_logedin()) {
 			global $pdo;
@@ -61,6 +70,7 @@
 		}
 	}
 
+	//steam openid login
 	if (isset($_GET['steam_login'])){
 		require 'openid.php';
 		try {
@@ -77,7 +87,9 @@
 					$ptn = "/^https?:\/\/steamcommunity\.com\/openid\/id\/(7[0-9]{15,25}+)$/";
 					preg_match($ptn, $id, $matches);
 
+					//check if user is logedin
 					if(logedin()) {
+						//write id to database
 						global $pdo;
 						$sql = "UPDATE user SET steam_id = :steam_id WHERE id = :id";
 						$sth = $pdo->prepare($sql);
