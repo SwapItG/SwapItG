@@ -5,6 +5,7 @@
 	require_once(__DIR__ . "/steam_config.php");
 
 	//generates an image with an link
+	//input: string $buttonstyle (can be "square" or "rectangle")
 	function steam_loginbutton($buttonstyle = "square") {
 		$button['rectangle'] = "01";
 		$button['square'] = "02";
@@ -14,6 +15,7 @@
 	}
 
 	//checks if the steam id is set for the given/logedin user
+	//input: int $user_id (if not set logedin user)
 	function steam_logedin($user_id = -1) {
 		if(logedin() || $user_id != -1) {
 			global $pdo;
@@ -30,6 +32,7 @@
 		}
 	}
 
+	//input: int $user_id (if not set logedin user)
 	//returns array("name" => "steam user name", "profile_url" => "steam profile url")
 	function get_steam_data($user_id = -1) {
 		//login/parameter check

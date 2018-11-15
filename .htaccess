@@ -3,6 +3,7 @@ RewriteCond %{REQUEST_URI} !.well-known/acme-challenge
 RewriteCond %{REQUEST_URI} !(.*).txt
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteRule ^/?profilePicture/(\d+)$ /pages/profilePicture.php?user_id=$1
 RewriteRule ^/?firstlogin/(\w+)$ /pages/firstlogin.php?c=$1
 RewriteRule ^/?changepassword/(\w+)$ /pages/changepassword.php?c=$1
 RewriteRule ^/?logout/(\w+)$ /pages/logout.php?csrf_token=$1

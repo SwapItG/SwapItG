@@ -2,6 +2,7 @@
   require_once($_SERVER['DOCUMENT_ROOT'] . "/php/userdata_get_set.php");
   require_once($_SERVER['DOCUMENT_ROOT'] . "/php/session.php");
   require_once($_SERVER['DOCUMENT_ROOT'] . "/php/register_login.php");
+  require_once($_SERVER['DOCUMENT_ROOT'] . "/php/steamauth.php");
 
   $error01 = error01($_GET["error01"]);
   $error02;
@@ -9,15 +10,15 @@
 
   $set_new_password_success_window = '
     <form method="POST" action="https://swapitg.com/editAccount">
-      <div style="display:inherit" class="notificationBoxBackground" class="changeRequestDiv">
+      <div style="background-color:#444;display:inherit" class="notificationBoxBackground" class="changeRequestDiv">
           <div class="notificationBox">
               <p style="color:#0A0" class="notificationboxQuestion">password change successful!</p>
-              <input type="submit" id="confirmPasswordRequest" class="submitButton" value="continue" />
+              <input type="submit" id="confirmPasswordRequest" class="submitButton cancelButton" value="continue" />
           </div>
       </div>
     </form>';
   $send_mail_password_change_result_window = '
-    <div onclick="toggleChangeRequest(this)" style="display:inherit" class="notificationBoxBackground" class="changeRequestDiv">
+    <div onclick="toggleChangeRequest(this)" style="background-color:#444;display:inherit" class="notificationBoxBackground" class="changeRequestDiv">
         <div class="notificationBox"">
             <p style="color:#F44" class="notificationboxQuestion">'.error02($error02).'</p>
             <button id="confirmPasswordRequest" class="submitButton saveButton"><i class="fas fa-envelope"></i> OKAY</button>
@@ -26,14 +27,18 @@
 
   if (empty(logedin())) {
       unset($_POST);
-      header('Location: https://swapitg.com/');
+      if (isset($_GET["c"])) {
+        header('Location: https://swapitg.com/changePasswordRequest?c='.$_GET["c"]);
+      } else {
+        header('Location: https://swapitg.com/');
+      }
   }
   if ($_POST["submitChanges"] == "cancel") {
       unset($_POST["submitChanges"]);
       header('Location: https://swapitg.com/account');
   }
   if ($_POST["submitChanges"] == "save") {
-      setAll($_POST["name"],$_POST["steamlink"],$_POST["info"]);
+      setAll($_POST["name"],$_POST["info"]);
       unset($_POST);
       header('Location: https://swapitg.com/account');
   }
@@ -83,7 +88,7 @@
       echo $set_new_password_success_window;
   }
 
-### Error Message Outputter ####################################
+  ### Error Message Outputter ####################################
   function error01($error) { // error for deleting account
     switch ($error) {
         case 1:
@@ -143,18 +148,19 @@
     }
     return $error;
   }
-### ENDE ########################################
+  ### ENDE ########################################
 ?>
-
-<?php include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php") ?>
+<?php
+  include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php");
+  include ($_SERVER['DOCUMENT_ROOT'] . "assets/css/button.html");
+?>
 <html>
   <head>
     <title>SwapitG <?PHP echo getName()?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preload" href="/assets/css/editAccount.css" as="style">
     <link rel="stylesheet" href="/assets/css/editAccount.css">
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <style type="text/css">
     </style>
@@ -200,11 +206,26 @@
                 <div class="accountEdit" id="accountInfo">
                     <textarea placeholder="your personal impressum" id="accountInfoArea" name="info"><?PHP echo getInfo() ?></textarea>
                 </div>
-                <div class="accountTopic">Links:</div>
+                <div class="accountTopic">Steam:</div>
                 <div class="accountEdit" id="accountLinks">
-                    <input type="text" class="inputField" name="steamlink" placeholder="http://steamcommunity.com/id/" value="<?PHP echo getSteamProfile() ?>" data-lpignore="true" autocomplete="off" />
+                  <?php
+                    if(!logedin()) {
+                      die("not loged in");
+                    }
+                    if(isset($_GET["logout"])) {
+                      steam_logout();
+                    }
+                    if(steam_logedin()) {
+                      echo '<span id="mail">'.get_steam_data()["profile_url"].'</span>';
+                      echo '<form method="GET" action=""><button style="color:grey" class="submitButton" type="submit" value="logout" name="logout">logout</button></form>';
+                    } else {
+                      steam_loginbutton();
+                    }
+                  ?>
                 </div>
                 <div class="accountTopic"></div>
+                <div class="accountEdit"></div>
+                <div class="accountTopic" id="submitBoxPlaceholder"></div>
                 <div class="accountEdit" id="submitBox">
                     <button class="submitButton saveButton" name="submitChanges" type="submit" value="save"><i class="fas fa-check"></i> SAVE</button>
                     <button class="submitButton deleteButton" type="button" onclick="toggleDeleteBox()"><i class="fas fa-times"></i> DELETE</button>

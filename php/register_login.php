@@ -6,6 +6,10 @@
 	require_once(__DIR__ . "/trade.php");
 	require_once(__DIR__ . "/comment_section.php");
 
+	//input: string $name
+	//input: string $email
+	//input: string $password
+	//input: string $password2 (password confirmation)
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> passwords dont match
@@ -70,8 +74,8 @@
 
 			//set email and password in the session for easier verification if the user verifies the email in the same session
 			start_session();
-			//xor data for security reasons
-			$_SESSION["reg_email"] = $email ^ substr(str_pad($verification_code, strlen($email), $verification_code), 0, strlen($email));
+			$_SESSION["reg_email"] = $email;
+			//xor password for security reasons
 			$_SESSION["reg_password"] = $password ^ substr(str_pad($verification_code, strlen($password), $verification_code), 0, strlen($password));
 			return 0;
 		} else {
@@ -79,6 +83,7 @@
 		}
 	}
 
+	//input: string $email
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> verification-code time passed or wrong email
@@ -136,6 +141,10 @@
 		}
 	}
 
+	//input: string $email
+	//input: string $password
+	//input: string $verification_code (emailed code)
+	//input: bool $session_check (if the function should look in the session variable for the login information)
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> verification-code time passed or wrong email
@@ -155,8 +164,8 @@
 		//check if session with email and password exists
 		start_session();
 		if($session_check && !empty($_SESSION["reg_email"]) && !empty($_SESSION["reg_password"])) {
-			//xor email and password to get the plain text
-			$email = substr($_SESSION["reg_email"] ^ str_pad($verification_code, strlen($_SESSION["reg_email"]), $verification_code), 0, strlen($_SESSION["reg_email"]));
+			$email = $_SESSION["reg_email"];
+			//xor password to get the plain text
 			$password = substr($_SESSION["reg_password"] ^ str_pad($verification_code, strlen($_SESSION["reg_password"]), $verification_code), 0, strlen($_SESSION["reg_password"]));
 			//try to verify with the email and password stored in the session
 			if(firstlogin($email, $password, $verification_code, false) == 0) {
@@ -215,6 +224,8 @@
 		return 0;
 	}
 
+	//input: string $email
+	//input: string $password
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> account does not exist
@@ -249,6 +260,8 @@
 		return 0;
 	}
 
+	//input: string $email
+	//input: string $password
 	//return 0 -> worked
 	//return 1 -> not logedin
 	//return 2 -> some parameters are empty
@@ -310,6 +323,7 @@
 		return 0;
 	}
 
+	//input: string $email
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> account does not exist
@@ -362,6 +376,9 @@
 		}
 	}
 
+	//input: string $email
+	//input: string $password (new password)
+	//input: string $verification_code (emailed code)
 	//return 0 -> worked
 	//return 1 -> some parameters are empty
 	//return 2 -> verification-code time passed or wrong email
@@ -404,6 +421,7 @@
 		return 0;
 	}
 
+	//input: string $email
 	//returns true if user exsits even if he isnt verified yet else false
 	function is_registered($email) {
 		global $pdo;

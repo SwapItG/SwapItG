@@ -7,6 +7,7 @@
 	}
 
 	//changes the session id and sets the Session variable user_id to the given user id
+	//input: int $user_id
 	function session_login($user_id) {
 		start_session();
 		session_regenerate_id();
@@ -47,6 +48,7 @@
 	}
 
 	//checks if the given token is the same as the token stored in the session
+	//input: string $token (token which was received by get/post)
 	function validateToken($token) {
 		if($token === getToken()) {
 			$_SESSION["csrf_token"] = "";

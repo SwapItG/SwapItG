@@ -15,6 +15,7 @@
 	}
 
 	//deletes all comments of an comment section and deletes the comment section
+	//input: int $comment_section_id
 	function delete_comment_section($comment_section_id) {
 		global $pdo;
 		$sql = "DELETE FROM comment WHERE comment_section_fk = :comment_section_id";
@@ -27,6 +28,9 @@
 		$sth->execute();
 	}
 
+	//input: int $comment_section_id
+	//input: int $rating (between 1 and 5)
+	//input: string $reason (max. lenght 512)
 	//return 0 -> worked
 	//return 1 -> not logedin
 	//return 2 -> some parameters are empty
@@ -98,6 +102,7 @@
 		}
 	}
 
+	//input: int $comment_section_id
 	//return 0 -> worked
 	//return 1 -> not logedin
 	//return 2 -> some parameters are empty
@@ -134,6 +139,7 @@
 	}
 
 	//gets comment of logedin user in specified comment section
+	//input: int $comment_section_id
 	//returns array("comment_id" => 1, "rating" => 5, "reason" => "reason test") or false
 	function get_comment($comment_section_id) {
 		//login ckeck and check if comment section is enabled
@@ -158,6 +164,7 @@
 	}
 
 	//gets information about an comment by its id
+	//input: int $comment_id
 	//returns array("comment_section_id" => 1, "rating" => 5, "reason" => "reason test", "user_id" => 1)
 	function get_comment_data($comment_id) {
 		global $pdo;
@@ -168,6 +175,7 @@
 		return $sth->fetch(PDO::FETCH_ASSOC);
 	}
 
+	//input: int $comment_section_id
 	//returns true if the comment section is enabled else false
 	function get_status_comment_section($comment_section_id) {
 		global $pdo;
@@ -178,6 +186,8 @@
 		return (bool) $sth->fetch()["enabled"];
 	}
 
+	//input: int $comment_section_id
+	//input: bool $status (if the comment section is enabled)
 	//sets if the comment section is enabled
 	function set_status_comment_section($comment_section_id, $status) {
 		global $pdo;
@@ -188,6 +198,7 @@
 		$sth->execute();
 	}
 
+	//input: int $comment_section_id
 	function get_rating($comment_section_id) {
 		//check if the comment section is enabled
 		if(!get_status_comment_section($comment_section_id)) {
@@ -210,6 +221,7 @@
 	}
 
 	//gets an array of comments for the specified comment section
+	//input: int $comment_section_id
 	function list_comments($comment_section_id) {
 		//check if the comment section is enabled
 		if(!get_status_comment_section($comment_section_id)) {

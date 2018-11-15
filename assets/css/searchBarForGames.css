@@ -45,7 +45,8 @@ margin-top:40px;
 padding-left:25px;
 color:#fff;
 max-height:350px;
-overflow-y:scroll
+overflow-y:scroll;
+z-index:1;
 }
 
 .autoSuggest {
@@ -56,7 +57,6 @@ transition:.1s;
 padding-right:25px;
 padding-top:5px;
 white-space:nowrap;
-min-width:270px
 }
 
 .autoSuggest:hover {

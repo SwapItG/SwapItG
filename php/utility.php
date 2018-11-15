@@ -1,4 +1,5 @@
 <?php
+	//input: string $s (e-mail address)
 	function mail_simplify($s) {
 		//set string to lowercase
 		$simplified = strtolower(trim($s));
@@ -57,6 +58,7 @@
 		return $result;
 	}
 
+	//input: string $s (password)
 	function password_security_check($s) {
 		//empty or array check
 		if(empty($s) || is_array($s)) {
@@ -72,6 +74,7 @@
 		return true;
 	}
 
+	//input: string $s (user name)
 	function valid_name_check($s) {
 		//empty or array check
 		if(empty($s) || is_array($s)) {

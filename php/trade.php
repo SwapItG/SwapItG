@@ -2,13 +2,17 @@
 	require_once(__DIR__ . "/db_connect.php");
 	require_once(__DIR__ . "/session.php");
 	require_once(__DIR__ . "/comment_section.php");
+	require_once($_SERVER['DOCUMENT_ROOT'] . "/php/html_output.php");
 
+	//input: string $description (max. lenght 512)
+	//input: string $game_name (max. lenght 32)
+	//input: array $item_offer (array(array("name" => "dirt", "count" => "1", "attributes" => array("rare", "item", ...)), array(...), ...))
+	//input: array $item_demand (array(array("name" => "dirt", "count" => "1", "attributes" => array("rare", "item", ...)), array(...), ...))
+	//input: int $comment_section_id (if set no new comment section will be created and given comment section id will be used)
 	//return 0 -> worked
 	//return 1 -> not logedin
 	//return 2 -> some parameters are empty or the wrong type
 	//return 3 -> some strings are is to long
-	//return 4 -> not allowed to create new item/attribute for this game
-	//item_offer/item_demand: array(array("name" => "dirt", "count" => "1", "attributes" => array("rare", "item", ...)), array(...), ...)
 	function create_trade($description, $game_name, $item_offer, $item_demand, $comment_section_id = -1) {
 		//Check Data
 
@@ -155,6 +159,7 @@
 		return 0;
 	}
 
+	//input: string $name
 	//return -1 -> not logedin
 	//return -2 -> unexpected error
 	function create_game($name) {
@@ -192,6 +197,8 @@
 		}
 	}
 
+	//input: string $name
+	//input: int $game_id
 	//return -1 -> not logedin
 	//return -2 -> unexpected error
 	function create_item($name, $game_id) {
@@ -232,6 +239,8 @@
 		}
 	}
 
+	//input: string $name
+	//input: int $game_id
 	//return -1 -> not logedin
 	//return -2 -> unexpected error
 	function create_attribute($name, $game_id) {
@@ -272,6 +281,8 @@
 		}
 	}
 
+	//input: int $trade_id
+	//input: bool $keep_comment_section (if true the comment section will be kept)
 	//return 0 -> worked
 	//return 1 -> not logedin
 	//return 2 -> trade not found
@@ -344,13 +355,16 @@
 		return 0;
 	}
 
+	//input: $old_trade_id (trade id of trade you want to edit)
+	//input: string $description (max. lenght 512)
+	//input: string $game_name (max. lenght 32)
+	//input: array $item_offer (array(array("name" => "dirt", "count" => "1", "attributes" => array("rare", "item", ...)), array(...), ...))
+	//input: array $item_demand (array(array("name" => "dirt", "count" => "1", "attributes" => array("rare", "item", ...)), array(...), ...))
 	//return 0 -> worked
 	//return 1 -> not logedin
 	//return 2 -> some parameters are empty or the wrong type
 	//return 3 -> some strings are is to long
-	//return 4 -> not allowed to create new item/attribute for this game
 	//return 5 -> trade not found
-	//item_offer/item_demand: array(array("name" => "dirt", "count" => "1", "attributes" => array("rare", "item", ...)), array(...), ...)
 	function edit_trade($old_trade_id, $description, $game_name, $item_offer, $item_demand) {
 		//check if logedin
 		if(!logedin()) {
@@ -381,6 +395,7 @@
 	}
 
 	//get game name of the game with the given id
+	//input: int $game_id
 	function getGameName($game_id) {
 		global $pdo;
 		$sql = "SELECT name FROM game WHERE id = :game_id";
@@ -396,6 +411,7 @@
 	}
 
 	//get game icon of the game with the given id
+	//input: int $game_id
 	function getGameIcon($game_id) {
 		global $pdo;
 		$sql = "SELECT icon_path FROM game WHERE id = :game_id";
@@ -411,6 +427,7 @@
 	}
 
 	//get item name of the item with the given id
+	//input: int $item_id
 	function getItemName($item_id) {
 		global $pdo;
 		$sql = "SELECT name FROM item WHERE id = :item_id";
@@ -426,6 +443,7 @@
 	}
 
 	//get comment section id from the trade with the given id
+	//input: int $trade_id
 	function getTradeCommentSection($trade_id) {
 		global $pdo;
 		$sql = "SELECT comment_section_fk FROM trade_proposal WHERE id = :trade_id";
@@ -440,6 +458,7 @@
 		return $sth->fetch()["comment_section_fk"];
 	}
 
+	//input: int $trade_id
 	function getTradeData($trade_id) {
 		$output = array();
 		global $pdo;
@@ -494,7 +513,13 @@
 		return $output;
 	}
 
-	//attributes input: array("name1", "name2", ...)
+	//input: int $trades_per_page (ammount of trades displayed per page)
+	//input: int $linkdata (value which defines which page to display)
+	//input: int $game_id
+	//input: string $item_offer_name
+	//input: string $item_demand_name
+	//input: array $item_offer_attributes (array("name1", "name2", ...))
+	//input: array $item_demand_attributes (array("name1", "name2", ...))
 	//returns array("forward" => "forward_linkdata", "backward" => "backward_linkdata", "list" => array(trade_ids))
 	function list_trades($trades_per_page, $linkdata, $game_id, $item_offer_name, $item_demand_name, $item_offer_attributes, $item_demand_attributes) {
 		//set item offer name to null if it is empty or an array
@@ -544,7 +569,7 @@
 			}
 		}
 		//the where part of the sql query
-		$sql_where = "AND (:item_offer_name IS NULL OR REPLACE(item_offer_item.name, \" \", \"\") LIKE REPLACE(:item_offer_name, \" \", \"\")) AND (:item_demand_name IS NULL OR REPLACE(item_demand_item.name, \" \", \"\") LIKE REPLACE(:item_demand_name, \" \", \"\")) $sql_where_attribute";
+		$sql_where = "AND ((:item_offer_name IS NOT NULL AND REPLACE(item_offer_item.name, \" \", \"\") LIKE REPLACE(:item_offer_name, \" \", \"\")) OR (:item_demand_name IS NOT NULL AND REPLACE(item_demand_item.name, \" \", \"\") LIKE REPLACE(:item_demand_name, \" \", \"\"))) $sql_where_attribute";
 		//the having part of the sql query
 		$sql_having = "COUNT(DISTINCT item_offer_attribute.attribute_fk) >= :offer_attribut_count AND COUNT(DISTINCT item_demand_attribute.attribute_fk) >= :demand_attribut_count";
 
@@ -615,6 +640,9 @@
 	}
 
 	//bind attributes
+	//input: object &$sth (pdo statement object passed by reference)
+	//input: array $item_offer_attributes (array("name1", "name2", ...))
+	//input: array $item_demand_attributes (array("name1", "name2", ...))
 	function generate_bind_attribute(&$sth, $item_offer_attributes, $item_demand_attributes) {
 		for ($i=0; $i < count($item_offer_attributes); $i++) {
 			$sth->bindValue(":offer_attribute_$i", "%" . htmlspecialchars($item_offer_attributes[$i]) . "%", PDO::PARAM_STR);
@@ -627,6 +655,7 @@
 	}
 
 	//get comment section status of trade
+	//input: int $trade_id
 	function getTradeCommentSectionStatus($trade_id) {
 		global $pdo;
 		$sql = "SELECT comment_section_fk FROM trade_proposal WHERE id = :trade_id";
@@ -641,6 +670,8 @@
 	}
 
 	//set comment section status of trade
+	//input: int $trade_id
+	//input: bool $status (if the comment section is enabled)
 	function setTradeCommentSectionStatus($trade_id, $status) {
 		if(!logedin()) {
 			return false;
@@ -661,6 +692,7 @@
 	}
 
 	//check if owner of trade
+	//input: int $trade_id
 	function owner_of_trade($trade_id) {
 		if(!logedin()) {
 			return false;
@@ -678,4 +710,5 @@
 		}
 		return true;
 	}
+
 ?>

@@ -16,18 +16,21 @@ function updateAutocomplete(slogan,param) {
   slogan = slogan.toLowerCase();
   selectedGameList = [];  // sorgt dafür, dass bei jedem Neuaufruf die Liste wieder geleert ist
   selectedGameListPic = [];
+  selectedGameListID = [];
   selectedGameListCounter = -1; // verhindert dass eine zusätzliche leere Zeile entsteht
   for(i=0;i<gameList.length;i++) {
       if(slogan == (gameList[i].substr(0,sloganlength).toLowerCase()) && param != "all" && slogan != "") {
           selectedGameListCounter++;
           selectedGameList[selectedGameListCounter] = gameList[i];
           selectedGameListPic[selectedGameListCounter] = gameListPic[i];
+          selectedGameListID[selectedGameListCounter] = gameListID[i];
           autocompleteContainer.style.width = "auto";
       }
   }
   if (slogan == "" || slogan == null) {
     selectedGameList = gameList;
     selectedGameListPic = gameListPic;
+    selectedGameListID = gameListID;
   }
   for(i=0;i<gameList.length;i++) {
     if(selectedGameList[i] != "" && selectedGameList[i] != null) {
@@ -35,6 +38,7 @@ function updateAutocomplete(slogan,param) {
         var t = document.createTextNode(selectedGameList[i]);
         l.appendChild(t);
         l.className = "autoSuggest";
+        l.id = selectedGameListID[i];
         l.onclick = function applyAuto() {
           var fillText = "";
           autocompleteContainer.style.display = "inherit";
@@ -67,7 +71,6 @@ function autoLoad() {
     loadTime = timeAfter - timeNow;
     console.log("Searchbar Loading Time: " + loadTime+"ms");
 }
-
 function loadFinished() {
    loadedImages++;
    if (loadedImages == imageNum) {
@@ -84,4 +87,5 @@ function focusAutoComplete(object) {
         autocompleteContainer.style.visibility = "visible";
         autocompleteContainer.style.display = "inherit";
         document.getElementById("autocompleteList").style.width = "300px";
+        createAttributes(gamesearchInput.value);
 }

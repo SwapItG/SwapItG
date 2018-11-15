@@ -5,7 +5,7 @@ session_start();
 $regValidationResult = $_GET["result"];
 $email = $_SESSION["reg_email"];
 
-if($regValidationResult == 0 && is_registered($email) == true) {
+if($regValidationResult == 0 && is_registered($email) == false) {
     echo "Your Account has been registered. We sent an email to <a href=''>".$email."</a>, please verifiy your account.";
 } else {
     echo "account registration failed!";

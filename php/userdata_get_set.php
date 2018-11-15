@@ -4,7 +4,7 @@
 	require_once(__DIR__ . "/session.php");
 	require_once(__DIR__ . "/comment_section.php");
 
-	//original is unsecure
+	//input: bool $orginal (if false the email will be passed into htmlspecialchars before return)
 	function getEmail($orginal = false) {
 		//logedin check
 		if(logedin()) {
@@ -27,6 +27,7 @@
 		}
 	}
 
+	//input: int $user_id (if not set logedin user)
 	function getName($user_id = -1) {
 		//logedin or user_id check
 		if(logedin() || $user_id != -1) {
@@ -46,6 +47,8 @@
 		}
 	}
 
+	//input: string $name
+	//input: bool $check_only (if true the name is not set)
 	function setName($name, $check_only = false) {
 		//logedin check
 		if(logedin()) {
@@ -69,6 +72,7 @@
 		}
 	}
 
+	//input: int $user_id (if not set logedin user)
 	function getSteamProfile($user_id = -1) {
 		//logedin or user_id check
 		if(logedin() || $user_id != -1) {
@@ -88,32 +92,18 @@
 		}
 	}
 
+	//input: int $user_id (if not set logedin user)
 	function getImage($user_id = -1) {
 		//logedin or user_id check
 		if(logedin() || $user_id != -1) {
-			global $pdo;
-
-			//get image from logedin/given user
-			$sql = "SELECT image FROM user WHERE id = :id";
-			$sth = $pdo->prepare($sql);
-			$sth->bindValue(":id", ($user_id == -1) ? logedin() : $user_id, PDO::PARAM_INT);
-			$sth->execute();
-			if($sth->rowCount() == 0) {
-				return false;
-			}
-			$image = $sth->fetch()["image"];
-			//if image is not set return default image
-			if(is_null($image)) {
-				return "/assets/img/defaultPic.jpg";
-			}
-			$finfo = new finfo(FILEINFO_MIME_TYPE);
-			return "data:" . $finfo->buffer($image) . ";base64," . base64_encode($image);
+			return "https://swapitg.com/profilePicture/" . (($user_id == -1) ? logedin() : $user_id);
 		} else {
 			return false;
 		}
 	}
 
 	//important: <form enctype="multipart/form-data" method="post" ...
+	//input: string $post_name (index of the post/files array where the image is stored)
 	//return 0 -> worked
 	//return 1 -> empty
 	//return 2 -> file size to big
@@ -150,6 +140,7 @@
 		}
 	}
 
+	//input: int $user_id (if not set logedin user)
 	function getInfo($user_id = -1) {
 		//logedin or user_id check
 		if(logedin() || $user_id != -1) {
@@ -168,6 +159,8 @@
 		}
 	}
 
+	//input: string $info (max. lenght 512)
+	//input: bool $check_only (if true the name is not set)
 	function setInfo($info, $check_only = false) {
 		//logedin check
 		if(logedin()) {
@@ -194,6 +187,7 @@
 		}
 	}
 
+	//input: int $user_id (if not set logedin user)
 	function getTrades($user_id = -1) {
 		//logedin or user_id check
 		if(logedin() || $user_id != -1) {
@@ -209,6 +203,7 @@
 		}
 	}
 
+	//input: int $user_id (if not set logedin user)
 	function getComments($user_id = -1) {
 		//logedin or user_id check
 		if(logedin() || $user_id != -1) {
@@ -224,6 +219,7 @@
 		}
 	}
 
+	//input: int $user_id (if not set logedin user)
 	function getCommentSection($user_id = -1) {
 		//logedin or user_id check
 		if(logedin() || $user_id != -1) {
@@ -239,6 +235,7 @@
 		}
 	}
 
+	//input: int $user_id (if not set logedin user)
 	function getUserCommentSectionStatus($user_id = -1) {
 		//logedin or user_id check
 		if(logedin() || $user_id != -1) {
@@ -248,6 +245,7 @@
 		}
 	}
 
+	//input: bool $status (if the comment section is enabled)
 	function setUserCommentSectionStatus($status) {
 		//logedin check
 		if(!logedin()) {
@@ -257,6 +255,8 @@
 		return true;
 	}
 
+	//input: string $name
+	//input: string $info
 	function setAll($name, $info) {
 		//check if possible to set name and info
 		if(setName($name, true) && setInfo($info, true)) {
