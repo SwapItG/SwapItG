@@ -267,4 +267,23 @@
 			return false;
 		}
 	}
+
+	function getAllUsers() {
+			global $pdo;
+			//
+			$sql = "SELECT id,email,name,steam_id,image,info,verified FROM user WHERE 1";
+			$sth = $pdo->prepare($sql);
+			$sth->execute();
+			if($sth->rowCount() == 0) {
+				return false;
+			}
+			$users;
+			for ($i=0;$i<$sth->rowCount();$i++) {
+				$data = $sth->fetch();
+				$users[$i]["id"] = $data["id"];
+				$users[$i]["name"] = $data["name"];
+				$users[$i]["image"] = getImage($users[$i]["id"]);
+			}
+			return $users;
+	}
 ?>

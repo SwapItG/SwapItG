@@ -47,6 +47,7 @@ function updateAutocomplete(slogan,param) {
           gamesearchInput.value = fillText;
           updateAutocomplete(fillText);
           autocompleteContainer.style.display = "none";
+          updateAttributes();
         };
         autocompleteList.appendChild(l);
         var img = document.createElement("IMG");
@@ -65,6 +66,7 @@ function updateAutocomplete(slogan,param) {
       return 0;
     }
   }
+  updateAttributes();
 }
 function autoLoad() {
     timeAfter = new Date();

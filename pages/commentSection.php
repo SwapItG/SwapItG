@@ -82,6 +82,7 @@
       font-family: sans-serif;
       color:white;
       padding-left:5px;
+      letter-spacing: 0.65px;
     }
     .commentInput {
       border-radius:2px;
@@ -123,7 +124,7 @@
   </style>
   </head>
   <body>
-    <h3 id="commentSectionTitle">COMMENTS:</h3>
+    <h3 id="commentSectionTitle">RATE THE TRADE:</h3>
     <div style="color:white" id="commentSection">
       <?PHP if(empty(get_comment($tradeCommentSectionID)) && logedin()) { ?>
       <form method="POST">

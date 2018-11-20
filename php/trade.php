@@ -569,7 +569,7 @@
 			}
 		}
 		//the where part of the sql query
-		$sql_where = "AND ((:item_offer_name IS NOT NULL AND REPLACE(item_offer_item.name, \" \", \"\") LIKE REPLACE(:item_offer_name, \" \", \"\")) OR (:item_demand_name IS NOT NULL AND REPLACE(item_demand_item.name, \" \", \"\") LIKE REPLACE(:item_demand_name, \" \", \"\"))) $sql_where_attribute";
+		$sql_where = "AND ((:item_offer_name IS NULL OR REPLACE(item_offer_item.name, \" \", \"\") LIKE REPLACE(:item_offer_name, \" \", \"\")) AND (:item_demand_name IS NULL OR REPLACE(item_demand_item.name, \" \", \"\") LIKE REPLACE(:item_demand_name, \" \", \"\"))) $sql_where_attribute";
 		//the having part of the sql query
 		$sql_having = "COUNT(DISTINCT item_offer_attribute.attribute_fk) >= :offer_attribut_count AND COUNT(DISTINCT item_demand_attribute.attribute_fk) >= :demand_attribut_count";
 
@@ -643,7 +643,7 @@
 	//input: object &$sth (pdo statement object passed by reference)
 	//input: array $item_offer_attributes (array("name1", "name2", ...))
 	//input: array $item_demand_attributes (array("name1", "name2", ...))
-	function generate_bind_attribute(&$sth, $item_offer_attributes, $item_demand_attributes) {
+	function generate_bind_attribute($sth, $item_offer_attributes, $item_demand_attributes) {
 		for ($i=0; $i < count($item_offer_attributes); $i++) {
 			$sth->bindValue(":offer_attribute_$i", "%" . htmlspecialchars($item_offer_attributes[$i]) . "%", PDO::PARAM_STR);
 		}

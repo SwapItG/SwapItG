@@ -21,13 +21,13 @@ function output_trade_header_html($trade,$tradeID) {
   </table>
   <div class="item_flex_box">';
 }
-function output_trade_offer_html($item_row_count,$trade) {
+function output_trade_offer_html($item_row_count,$trade,$tradeID) {
   echo "<div class='item_div_flex'><table class='item_table item_table_has'><tr><th class='userPostTH' colspan='".$item_row_count."'>HAS</th></tr><tr>";
   $row_split = 0;
   for ($j=0;$j<count($trade["item_offer"]);$j++) {
     $tradeData = $trade["item_offer"][$j];
     $row_split++;
-    echo '<td class="item_table_cell">'.create_item_display($tradeData).'</td>';
+    echo '<td class="item_table_cell" onmouseout="hideAttributes(this,`attribute_'.$trade["user_id"].'_'.$j.'_'.$tradeID."_HAS".'`)" onmouseover="displayAttributes(this,`attribute_'.$trade["user_id"].'_'.$j.'_'.$tradeID."_HAS".'`)">'.create_item_display($tradeData,$j,$trade,$tradeID,"HAS").'</td>';
     if ($row_split >= $item_row_count) {
       echo "</tr><tr>";
       $row_split = 0;
@@ -36,13 +36,13 @@ function output_trade_offer_html($item_row_count,$trade) {
   //make_trade_full_row($row_split,$item_row_count);
   echo "</tr></table></div>";
 }
-function output_trade_demand_html($item_row_count,$trade) {
+function output_trade_demand_html($item_row_count,$trade,$tradeID) {
   echo "<div class='item_div_flex'><table class='item_table item_table_wants'><tr><th colspan='".$item_row_count."'>WANT</th></tr><tr>";
   $row_split = 0;
   for ($j=0;$j<count($trade["item_demand"]);$j++) {
     $tradeData = $trade["item_demand"][$j];
     $row_split++;
-    echo '<td class="item_table_cell">'.create_item_display($tradeData).'</td>';
+    echo '<td class="item_table_cell" onmouseout="hideAttributes(this,`attribute_'.$trade["user_id"].'_'.$j.'_'.$tradeID."_WANT".'`)" onmouseover="displayAttributes(this,`attribute_'.$trade["user_id"].'_'.$j.'_'.$tradeID."_WANT".'`)">'.create_item_display($tradeData,$j,$trade,$tradeID,"WANT").'</td>';
     if ($row_split >= $item_row_count) {
       echo "</tr><tr>";
       $row_split = 0;
@@ -59,9 +59,9 @@ function output_trade_footer_htlm($trade) {
 function output_trade_html($trade,$item_row_count,$tradeID) {
   output_trade_header_html($trade,$tradeID);
   // Output for User Offer
-  output_trade_offer_html($item_row_count,$trade);
+  output_trade_offer_html($item_row_count,$trade,$tradeID);
   // Output for User Demand
-  output_trade_demand_html($item_row_count,$trade);
+  output_trade_demand_html($item_row_count,$trade,$tradeID);
   // Output for trade footer
   output_trade_footer_htlm($trade);
 }
@@ -75,13 +75,13 @@ function make_trade_full_row($current,$max) {
     echo "<td></td>";
   }
 }
-function create_item_display($tradeData) {
+function create_item_display($tradeData,$j,$trade,$tradeID,$desire) {
   if ($tradeData["count"]>1) {
-    $display = "<table class='item_contain'><tr><td class='item_count_td'><div  class='item_count'>".$tradeData["count"]."x</div><td style='display:block;width:125px'></td></tr><tr></td><td colspan='2' class='item_name'>".$tradeData["name"]."</td></tr></table>";
+    $display .= "<table class='item_contain'><tr><td class='item_count_td'><div  class='item_count'>".$tradeData["count"]."x</div><td style='display:block;width:125px'></td></tr><tr></td><td colspan='2' class='item_name'>".$tradeData["name"]."</td></tr></table>";
   } else {
-    $display = "<table class='item_contain'><tr></td><td colspan='2' class='item_name'>".$tradeData["name"]."</td></tr></table>";
+    $display .= "<table class='item_contain'><tr></td><td colspan='2' class='item_name'>".$tradeData["name"]."</td></tr></table>";
   }
-
+  $display .= add_attribute_window($tradeData,$j,$trade,$trade["user_id"],$tradeID,$desire);
   return $display;
 }
 function calculate_time_span($date,$playername) {
@@ -107,5 +107,14 @@ function calculate_time_span($date,$playername) {
     $time_end_string = " days";
   }
   return "<span style='color:grey'>".$playername." </span> ".$time_ago.$time_end_string." ago";
+}
+function add_attribute_window($tradeData,$round,$trade,$uID,$tradeID,$desire) {
+  $attr .= '<div class="attribute_table" id="attribute_'.$uID.'_'.$round.'_'.$tradeID."_".$desire.'">';
+  $attr .= "<table>";
+  for ($i=0;$i<count($tradeData["attributes"]);$i++) {
+    $attr .= "<tr><td>".$tradeData["attributes"][$i]["name"]."</td></tr>";
+  }
+  $attr .= "</table></div>";
+  return $attr;
 }
 ?>

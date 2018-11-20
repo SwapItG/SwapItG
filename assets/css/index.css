@@ -213,7 +213,11 @@ body {
 .item_name {
   padding-right:5px;
   width:100%;
-  height:25px;
+  height:45px;
+}
+.item_name:hover {
+  box-shadow:inset 0px 0px 4px #AAA;
+  cursor:context-menu;
 }
 .item_contain {
   border-collapse: collapse;
@@ -223,6 +227,15 @@ body {
   border:none;
   min-width:0px !important;
   max-width:100px;
+}
+.attribute_table {
+  position:absolute;
+  visibility: hidden;
+  background-color:#444;
+}
+.attribute_table td {
+  width:125px;
+  height:35px;
 }
 #right-arrow {
   background-image:url("/assets/img/icons/hard_edge_arrow.svg");

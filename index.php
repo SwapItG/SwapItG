@@ -19,7 +19,7 @@
   $tradeCounts = 5;
   $item_row_count = 3;
   if(empty($_GET["game"])) {
-  	$_GET["game"] = null;
+
   }
   if(empty($searchedItem)) {
     $searchedItem = 0;
@@ -34,8 +34,18 @@
     $item_offer = $searchedItem;
     $item_demand = $searchedItem;
   }
+  $attributes = array();
+  for ($i=0;$i<count($_GET["item_attribute"]);$i++) {
+    if ($_GET["item_attribute"][$i] == "none" || $_GET["item_attribute"][$i] == "") {
 
-  $tradeList = list_trades($tradeCounts,$pageLink,$gameID,$item_offer,$item_demand,0,0);
+    } else {
+      $attributes[$i] = $_GET["item_attribute"][$i];
+    }
+  }
+  print_r($attributes);
+  print_r($item_demand);
+  print_r($item_offer);
+  $tradeList = list_trades($tradeCounts,$pageLink,$gameID,$item_offer,$item_demand,$attributes,$attributes);
 
   /*if (empty($tradeList['list'])) {
       $tradeList["list"][0] = "";
@@ -69,12 +79,12 @@
       <div style="height:5vh">
       </div>
       <!-- Filter Area -->
+      <form method="GET">
       <div>
         <table style="width:100%">
           <tr>
           <!-- Simple Searchbar -->
           <td style="width:300px">
-            <form method="GET">
               <div class="input-group searchbar">
                 <input type="text" name="game" value="<? echo $_GET["game"] ?>" autocomplete="off" onclick="loadAutoCompleteScript()" onfocus="focusAutoComplete(this)" onfocusout="defocusAutoComplete(this)"  oninput="updateAutocomplete(this.value)" id="searchInputBar" class="form-control searchInput" type="text" placeholder="Select your game..." />
                 <input class="searchButton" type="submit" value="search" />
@@ -157,14 +167,17 @@
               </div>
               <div id="searchAttributes">
               <select id="itemDesire" name="itemDesire">
+                <option <?PHP if($_GET["itemDesire"] == "HAS"){echo "selected";} ?>>BOTH</option>
                 <option <?PHP if($_GET["itemDesire"] == "HAS"){echo "selected";} ?>>HAS</option>
                 <option <?PHP if($_GET["itemDesire"] == "WANT"){echo "selected";} ?>>WANT</option>
               </select>
+              <div id="specialAttributes">
+              </div>
             </div>
-            </form>
           </div>
         </div>
       </div>
+      </form>
       <!-- User Requests -->
       <div style="overflow-x:auto">
         <table class="contentUserPostTableBox">
@@ -203,3 +216,48 @@
 </html>
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/extendedFilter.js"></script>
+<script src="assets/js/game_arrays.js"></script>
+<script>
+  var specialAttributes = document.getElementById("specialAttributes");
+
+  function updateAttributes() {
+    specialAttributes.innerHTML = "";
+    var searchedGame = document.getElementById("searchInputBar").value.replace(/ /g,"_").toLowerCase();
+    var game_array = new Array();
+    for ($i=0;$i<games.length;$i++) {
+      if (searchedGame == games[$i][0]) {
+        game_array = games[$i];
+      }
+    }
+    console.log(game_array);
+    var attribute_html = "";
+    for ($i=1;$i<game_array.length;$i++) {
+      if (game_array[$i][0] == "array") {
+        attribute_html += '<select class="item_input" id="item_attribute_input" name="item_attribute[]">';
+        for ($j=1;$j<game_array[$i].length;$j++) {
+          if ($j==1){
+            attribute_html += '<option selected>'+game_array[$i][$j]+'</option>';
+          } else {
+            attribute_html += '<option>'+game_array[$i][$j]+'</option>';
+          }
+        }
+        attribute_html += "</select>";
+      } else {
+        attribute_html += '<input type="text" placeholder="'+game_array[$i]+'" name="item_attribute[]" />';
+      }
+    }
+    specialAttributes.innerHTML = attribute_html;
+  }
+</script>
+<script>
+  function displayAttributes(object,id) {
+    //console.log(id);
+    attrWindow = document.getElementById(id);
+    attrWindow.style.visibility = "visible";
+  }
+  function hideAttributes(object,id) {
+    //console.log("hide: " + id);
+    attrWindow = document.getElementById(id);
+    attrWindow.style.visibility = "hidden";
+  }
+</script>
