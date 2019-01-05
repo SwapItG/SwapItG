@@ -10,7 +10,6 @@ require_once(__DIR__ . "../../../php/session.php");
     <meta name="google-site-verification" content="17Ia-Aotx4mQG7ayi2W9l97hAJcgF8GB9FCrU34zdA0" />
     <link rel="shortcut icon" href="/assets/img/icons/swapitg_icon.png" />
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/dh-navbar-inverse.css">
     <style>
         .navbar {
@@ -20,6 +19,7 @@ require_once(__DIR__ . "../../../php/session.php");
         }
     </style>
 </head>
+<div id="backgroundIMG"></div>
 <body style="font-size:12;">
     <nav style="position:inherit" class="navbar navbar-light navbar-expand-md fixed-top navigation-clean navbar-inverse navbar-fixed-top">
         <div class="container-fluid">

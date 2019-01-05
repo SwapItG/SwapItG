@@ -12,7 +12,7 @@ function updateAutocomplete(slogan,param) {
   var autoSuggestElements = document.getElementsByClassName("autoSuggest");
   var sloganlength = slogan.length;
   autocompleteList.innerHTML = "";
-  autocompleteContainer.style.display = "inherit";
+  autocompleteContainer.style.visibility = "visible";
   slogan = slogan.toLowerCase();
   selectedGameList = [];  // sorgt dafür, dass bei jedem Neuaufruf die Liste wieder geleert ist
   selectedGameListPic = [];
@@ -41,13 +41,12 @@ function updateAutocomplete(slogan,param) {
         l.id = selectedGameListID[i];
         l.onclick = function applyAuto() {
           var fillText = "";
-          autocompleteContainer.style.display = "inherit";
           fillText = this.innerHTML.split("<");
           fillText = fillText[0];
           gamesearchInput.value = fillText;
           updateAutocomplete(fillText);
-          autocompleteContainer.style.display = "none";
           updateAttributes();
+          autocompleteContainer.style.visibility = "hidden";
         };
         autocompleteList.appendChild(l);
         var img = document.createElement("IMG");
@@ -76,7 +75,7 @@ function autoLoad() {
 function loadFinished() {
    loadedImages++;
    if (loadedImages == imageNum) {
-     loadScriptIMG.style.display = "none";
+     loadScriptIMG.style.visibility = "hidden";
      imageNum = 0;
      autoLoad();
    }
@@ -87,7 +86,6 @@ function defocusAutoComplete(object) {
 function focusAutoComplete(object) {
         updateAutocomplete("");
         autocompleteContainer.style.visibility = "visible";
-        autocompleteContainer.style.display = "inherit";
         document.getElementById("autocompleteList").style.width = "300px";
-        createAttributes(gamesearchInput.value);
+        //createAttributes(gamesearchInput.value);
 }

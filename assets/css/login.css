@@ -2,12 +2,12 @@
   --header-height:75px;
   --form-height:20px;
   --form-input-width:115px;
-  --form-submit-width:125px;
+  --form-submit-width:65px;
   --form-submit-height:30px;
 }
   .logInput {
     height:var(--form-height);
-    width:var(--form-input-width);
+    width:200px;
     font-size:12px;
     border:none;
     border-bottom:solid;
@@ -46,14 +46,14 @@
     font-size:13px;
     font-family:serif;
     background-color:rgba(0,0,0,0);
-    width:60px;
-    color:#444 !important;
+    width:150px;
+    color:#999 !important;
     border:none;
     position: inherit;
     margin-right:160px;
   }
   .passwordLost:hover {
-    color:#F55 !important;
+    color:#F44 !important;
     cursor:pointer;
   }
   #loginContainer {
@@ -68,7 +68,6 @@
       height:calc(var(--form-height) + 4px);
       width:var(--form-submit-width);
       font-size:12px;
-      width:75px;
       border:solid;
       border-color:rgba(255,255,255,1);
       background-color:rgba(255,255,255,0);
@@ -180,11 +179,17 @@
           margin-bottom:15px;
       }
       .logInput {
-          width:130px;
+          width:150px;
           height:20px;
+          background-color:rgba(255,255,255,1);
+          border:none !important;
+          color:black;
+      }
+      .logInput:focus {
+        width:185px;
       }
   }
-  @media only screen and (max-width: 391px) {
+  @media only screen and (max-width: 440px) {
     #profileCollapseMenu {
       left:0px;
       top:calc(var(--header-height) * 2.05);
@@ -197,5 +202,11 @@
       right:135px;
       top:27.5px;
       margin-right:5px;
+    }
+    .logInput {
+        width:120px;
+    }
+    .logInput:focus {
+      width:120px;
     }
   }

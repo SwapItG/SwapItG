@@ -83,6 +83,12 @@
                           <input style="display:none;background-color:rgba(0,0,0,0)" type="submit" name="deleteTrade" value="delete" />
                           <img class="deleteTradeIcon" src="assets/img/x_icon.png" />
                         </label>
+                      </form>
+                      <form method="POST" action="https://swapitg.com/account?trade='.$tradeID.'">
+                        <label>
+                          <input style="display:none;background-color:rgba(0,0,0,0)" type="submit" name="editTrade" value="edit" />
+                          <!-- <img class="editTradeIcon" src="assets/img/edit_icon.png" /> -->
+                        </label>
                       </form>';
                   output_trade_html($trade,$item_row_count,$tradeID);
                 }
@@ -95,6 +101,18 @@
     </div>
     <script>
     lazyload();
+    </script>
+    <script>
+      function displayAttributes(object,id) {
+        //console.log(id);
+        attrWindow = document.getElementById(id);
+        attrWindow.style.visibility = "visible";
+      }
+      function hideAttributes(object,id) {
+        //console.log("hide: " + id);
+        attrWindow = document.getElementById(id);
+        attrWindow.style.visibility = "hidden";
+      }
     </script>
   </body>
 </html>

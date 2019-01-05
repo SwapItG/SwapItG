@@ -16,9 +16,8 @@
 }
 
 #ItemAutoCompleteContainer {
-display:none;
-position:absolute;
-margin-left:19.25%;
+visibility:hidden;
+margin-left:20%;
 background-color:#333;
 padding-left:25px;
 color:#fff;
@@ -26,10 +25,18 @@ max-height:250px;
 overflow-y:scroll;
 width:35vw;
 max-width: 400px;
-min-width:250px;
+min-width:200px;
 z-index:0;
 text-align: left;
 margin-top:-30px;
+}
+
+#ItemAutoCompleteBox {
+  position:absolute;
+  width:91%;
+  left:auto;
+  right:auto;
+  max-width:1250px;
 }
 
 #ItemAutoCompleteList {

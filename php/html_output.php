@@ -22,7 +22,7 @@ function output_trade_header_html($trade,$tradeID) {
   <div class="item_flex_box">';
 }
 function output_trade_offer_html($item_row_count,$trade,$tradeID) {
-  echo "<div class='item_div_flex'><table class='item_table item_table_has'><tr><th class='userPostTH' colspan='".$item_row_count."'>HAS</th></tr><tr>";
+  echo "<div class='item_div_flex'><table class='item_table item_table_has'><tr><th class='userPostTH' colspan='".$item_row_count."'>OFFERS</th></tr><tr>";
   $row_split = 0;
   for ($j=0;$j<count($trade["item_offer"]);$j++) {
     $tradeData = $trade["item_offer"][$j];
@@ -37,7 +37,7 @@ function output_trade_offer_html($item_row_count,$trade,$tradeID) {
   echo "</tr></table></div>";
 }
 function output_trade_demand_html($item_row_count,$trade,$tradeID) {
-  echo "<div class='item_div_flex'><table class='item_table item_table_wants'><tr><th colspan='".$item_row_count."'>WANT</th></tr><tr>";
+  echo "<div class='item_div_flex'><table class='item_table item_table_wants'><tr><th colspan='".$item_row_count."'>IS TRADING FOR</th></tr><tr>";
   $row_split = 0;
   for ($j=0;$j<count($trade["item_demand"]);$j++) {
     $tradeData = $trade["item_demand"][$j];
@@ -106,7 +106,7 @@ function calculate_time_span($date,$playername) {
     $time_ago = round($time_ago/60/60/24);
     $time_end_string = " days";
   }
-  return "<span style='color:grey'>".$playername." </span> ".$time_ago.$time_end_string." ago";
+  return "<span style='color:#AAA'>".$playername." </span> ".$time_ago.$time_end_string." ago";
 }
 function add_attribute_window($tradeData,$round,$trade,$uID,$tradeID,$desire) {
   $attr .= '<div class="attribute_table" id="attribute_'.$uID.'_'.$round.'_'.$tradeID."_".$desire.'">';

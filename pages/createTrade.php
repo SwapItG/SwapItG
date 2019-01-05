@@ -42,6 +42,12 @@
       $item_offer[0] = $item_null;
     }
     $result = create_trade($_POST["description"],$_POST["game"],$item_offer,$item_demand);
+    if ($result == 2) {
+      $result = "You must select a game and add at least one item to create a trade!";
+    }
+    if ($result == 3) {
+      $result = "Some inputs are too long, please make them shorter!";
+    }
     unset($_POST);
   }
 ?>
@@ -50,23 +56,22 @@
   <head>
     <link rel="stylesheet" href="assets/css/global_var.css">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/Filter.css">
     <link rel="stylesheet" href="assets/css/createTrade.css">
     <link rel="stylesheet" href="assets/css/fontawesome.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/searchBarForGames.css">
+    <link rel="stylesheet" href="assets/min/css/searchBarForGames.css">
     <title>swapitG create trade</title>
   </head>
   <body id="body">
   <?php include "source/header.php" ?>
   <?php include ($_SERVER['DOCUMENT_ROOT'] . "assets/css/button.html"); ?>
     <div id="CreateTradeDiv">
+      <?PHP echo "<div style='color:yellow;margin-left:'>".$result."</div>";?>
       <form method="POST" action="">
         <!-- searchbar for games -->
         <div id="searchbarDiv">
           <div class="input-group searchbar">
           <input type="text" name="game" value="<?PHP echo $_POST["game"] ?>" autocomplete="off" onclick="loadAutoCompleteScript()" onfocus="focusAutoComplete(this)" onfocusout="defocusAutoComplete(this)"  oninput="updateAutocomplete(this.value)" id="searchInputBar" class="form-control searchInput" placeholder="Select your game..." />
-          <input class="searchButton" type="submit" value="search" />
           <img id="loadScriptIMG" src="assets/img/loading.svg" alt="" />
           <div id="autocompleteContainer">
             <ul id="autocompleteList">
@@ -227,6 +232,9 @@
       function deleteAttribute(object) {
         object.parentElement.remove();
       }
+      function updateAttributes() {
+
+      }
     </script>
     <script>
       var gameList = new Array(<?PHP
@@ -267,10 +275,9 @@
         document.getElementById('removeFilterButton').click();
       }
     </script>
-    <span style='color:lightgreen'>Angebot:</span><pre style="color:white">
-    <?PHP print_r($item_offer)?></pre><br><br>
-    <span style='color:lightgreen'>Nachfrage:</span><pre style="color:white">
-    <?PHP print_r($item_demand);
-    echo "<a style='color:yellow'>".$result."</a>";?></pre>
+    <span style='color:lightgreen'></span><pre style="color:white">
+    <?PHP //print_r($item_offer)?></pre><br><br>
+    <span style='color:lightgreen'></span><pre style="color:white">
+    </pre>
   </body>
 </html>

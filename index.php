@@ -3,56 +3,61 @@
     unset($_GET);
     header('Location: https://swapitg.com/');
   }
+  if (isset($_GET["cookie-policy"])) {
+    header('Location: https://swapitg.com/impressum?target=12');
+  }
   include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/header.php");
   require_once($_SERVER['DOCUMENT_ROOT'] . "/php/trade.php");
+  echo "<pre style='color:white'>";
 
+  $item_has = 0;
+  $item_want = 0;
+  $searchedItem = 0;
+  $attributes_has = array();
+  $attributes_want = array();
+  $attributes = array();
+  $itemDesire = "HAS";
+  $tradeCounts = 5; // Define how many trade outputs per side
+  $item_row_count = 3; // When the item trade rows will break
+  $old_attributes = array();
+  $j = -1;
   $gameID = getGameID($_GET["game"]);
   $searchedItem = $_GET["itemSearch"];
   $itemDesire = $_GET["itemDesire"];
-  $item_offer = 0;
-  $item_demand = 0;
+
   if (isset($_POST["pagelink"])) {
     $pageLink = $_POST["pagelink"];
   } else {
     $pageLink = 0;
   }
-  $tradeCounts = 5;
-  $item_row_count = 3;
-  if(empty($_GET["game"])) {
-
-  }
-  if(empty($searchedItem)) {
-    $searchedItem = 0;
-  }
-  if ($itemDesire == "WANT") {
-    $item_offer = $searchedItem;
-  }
-  if ($itemDesire == "HAS") {
-    $item_demand = $searchedItem;
-  }
-  if ($itemDesire == "BOTH") {
-    $item_offer = $searchedItem;
-    $item_demand = $searchedItem;
-  }
-  $attributes = array();
+  /*if ($itemDesire == "BOTH") {
+    $item_want = $searchedItem;
+    $item_has = $searchedItem;
+  } */
   for ($i=0;$i<count($_GET["item_attribute"]);$i++) {
-    if ($_GET["item_attribute"][$i] == "none" || $_GET["item_attribute"][$i] == "") {
-
+    if ($_GET["item_attribute"][$i] == "none" || $_GET["item_attribute"][$i] == "" || $_GET["item_attribute"][$i] == "array") {
+      $old_attributes[$i] = "";
     } else {
-      $attributes[$i] = $_GET["item_attribute"][$i];
+      $old_attributes[$i] = $_GET["item_attribute"][$i];
     }
   }
-  print_r($attributes);
-  print_r($item_demand);
-  print_r($item_offer);
-  $tradeList = list_trades($tradeCounts,$pageLink,$gameID,$item_offer,$item_demand,$attributes,$attributes);
+  for ($i=0;$i<count($_GET["item_attribute"]);$i++) {
+    if ($_GET["item_attribute"][$i] == "none" || $_GET["item_attribute"][$i] == "" || $_GET["item_attribute"][$i] == "array") {
+    } else {
+      $j++;
+      $attributes[$j] = $_GET["item_attribute"][$i];
+    }
+  }
+  if ($itemDesire == "HAS") {
+    $item_has = $searchedItem;
+    $attributes_has = $attributes;
+  }
+  if ($itemDesire == "WANT") {
+    $item_want = $searchedItem;
+    $attributes_want = $attributes;
+  }
 
-  /*if (empty($tradeList['list'])) {
-      $tradeList["list"][0] = "";
-      $tradeList["list"][1] = "";
-      $tradeList["list"][2] = "";
-      $tradeList["list"][3] = "";
-  }*/
+  $tradeList = list_trades($tradeCounts,$pageLink,$gameID,$item_has,$item_want,$attributes_has,$attributes_want);
   function getGameID($gameName) {
       $api_url = 'https://swapitg.com/getGames';
       $json = json_decode(file_get_contents($api_url), true);
@@ -61,19 +66,29 @@
             return $json[$i]["id"];
         }
       }
-  }?>
+  }
+  echo "</pre>";
+  ?>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwapitG</title>
-    <link rel="stylesheet" href="assets/css/index.css">
-    <link rel="stylesheet" href="assets/css/searchBarForGames.css">
-    <link rel="stylesheet" href="assets/css/Filter.css">
-    <link rel="stylesheet" href="assets/css/searchItemBar.css">
-</head>
-  <body id="body">
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>SwapitG</title>
+      <link rel="stylesheet" href="assets/css/index.css">
+      <link rel="stylesheet" href="assets/min/css/Filter.css">
+      <link rel="stylesheet" href="assets/min/css/searchBarForGames.css">
+      <link rel="stylesheet" href="assets/css/searchItemBar.css">
+      <link rel="stylesheet" type="text/css" href="assets/eu-cookie-law-popup/css/jquery-eu-cookie-law-popup.css"/>
+      <style>
+        body {
+          width:100%;
+          height:100%;
+        }
+      </style>
+  </head>
+  <body id="body" onload="rebuildAttributes()" class="eupopup eupopup-bottom">
+  <div id="backgroundIMG"></div>
     <div id="websiteContent">
       <!-- Placeholder -->
       <div style="height:5vh">
@@ -160,16 +175,17 @@
                 <span id="itemSearchError"></span>
                 <input name="itemSearch" id="itemSearchInputField" onfocus="displayItemSearchBar()" autocomplete="off" onfocusout="hideItemSearchBar()" onclick="printItemList(document.getElementById('searchInputBar').value)" placeholder="search an item for this game" value="<?PHP echo $_GET["itemSearch"]; ?>" />
                 <img id="searchItemLoadingIMG" src="assets/img/loading.gif" alt="" />
-                <div id="ItemAutoCompleteContainer">
-                  <ul id="ItemAutoCompleteList">
-                  </ul>
+                <div id="ItemAutoCompleteBox">
+                  <div id="ItemAutoCompleteContainer">
+                    <ul id="ItemAutoCompleteList">
+                    </ul>
+                  </div>
                 </div>
               </div>
               <div id="searchAttributes">
               <select id="itemDesire" name="itemDesire">
-                <option <?PHP if($_GET["itemDesire"] == "HAS"){echo "selected";} ?>>BOTH</option>
-                <option <?PHP if($_GET["itemDesire"] == "HAS"){echo "selected";} ?>>HAS</option>
-                <option <?PHP if($_GET["itemDesire"] == "WANT"){echo "selected";} ?>>WANT</option>
+                <option <?PHP if($_GET["itemDesire"] == "HAS"){echo "selected";} ?>>I Want..</option>
+                <option <?PHP if($_GET["itemDesire"] == "WANT"){echo "selected";} ?>>I Have..</option>
               </select>
               <div id="specialAttributes">
               </div>
@@ -188,7 +204,9 @@
                 ########## Output trades ##########
                 echo '<tr>
                 <td class="userPost" colspan="6">
-                <div class="userPostDIV">';
+
+                <div class="userPostDIV">
+                <div class="userPostBackground"></div>';
                 output_trade_html($trade,$item_row_count,$tradeID);
               }
             ?>
@@ -212,15 +230,23 @@
       <script src="https://cdn.jsdelivr.net/npm/lazyload@2.0.0-beta.2/lazyload.js"></script>
       <script>lazyload()</script>
     </div>
+    <?PHP include ($_SERVER['DOCUMENT_ROOT'] . "/pages/source/footer.php"); ?>
   </body>
 </html>
 <script src="assets/js/jquery.min.js"></script>
+<script src="assets/eu-cookie-law-popup/js/jquery-eu-cookie-law-popup.js"></script>
 <script src="assets/js/extendedFilter.js"></script>
 <script src="assets/js/game_arrays.js"></script>
 <script>
   var specialAttributes = document.getElementById("specialAttributes");
 
-  function updateAttributes() {
+  function rebuildAttributes() {
+    var $attributes = new Array(<?PHP for($i=0;$i<count($old_attributes);$i++){echo '"'.$old_attributes[$i].'",';} ?>);
+    var headerItem = "<?PHP echo $_GET["itemSearch"]; ?>";
+    if (headerItem != "") {
+      document.getElementById("itemSearchInputField").value = headerItem;
+    }
+    //console.log($attributes);
     specialAttributes.innerHTML = "";
     var searchedGame = document.getElementById("searchInputBar").value.replace(/ /g,"_").toLowerCase();
     var game_array = new Array();
@@ -229,7 +255,38 @@
         game_array = games[$i];
       }
     }
-    console.log(game_array);
+    var attribute_html = "";
+    for ($i=0;$i<$attributes.length;$i++) {
+      if (jQuery.type(game_array[$i+1]) == "array") {
+        //console.log("select");
+        attribute_html += '<select class="item_input" id="item_attribute_input" name="item_attribute[]">';
+        for($j=0;$j<game_array[$i+1].length;$j++) {
+          if ($attributes[$i] == game_array[$i+1][$j]) {
+            attribute_html += '<option selected>'+$attributes[$i]+'</option>';
+          } else {
+            if (game_array[$i+1][$j] != "array") {
+              attribute_html += '<option>'+game_array[$i+1][$j]+'</option>';
+            }
+          }
+        }
+        attribute_html += "</select>";
+      } else {
+        //console.log("input");
+        attribute_html += '<input type="text" value="'+$attributes[$i]+'" name="item_attribute[]" placeholder="'+game_array[$i+1]+'" autocomplete="off" />';
+      }
+    }
+    specialAttributes.innerHTML = attribute_html;
+  }
+  function updateAttributes() {
+    var searchWord = "<?PHP echo $_GET["game"]; ?>".replace(/ /g,"_").toLowerCase();
+    var searchedGame = document.getElementById("searchInputBar").value.replace(/ /g,"_").toLowerCase();
+    specialAttributes.innerHTML = "";
+    var game_array = new Array();
+    for ($i=0;$i<games.length;$i++) {
+      if (searchedGame == games[$i][0]) {
+        game_array = games[$i];
+      }
+    }
     var attribute_html = "";
     for ($i=1;$i<game_array.length;$i++) {
       if (game_array[$i][0] == "array") {
@@ -246,7 +303,12 @@
         attribute_html += '<input type="text" placeholder="'+game_array[$i]+'" name="item_attribute[]" />';
       }
     }
-    specialAttributes.innerHTML = attribute_html;
+    if (searchWord == searchedGame) {
+      rebuildAttributes();
+    } else {
+      specialAttributes.innerHTML = attribute_html;
+      document.getElementById("itemSearchInputField").value = "";
+    }
   }
 </script>
 <script>

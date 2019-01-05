@@ -11,3 +11,14 @@
 --skyblue:#52e5ff;
 --gold:#faca4d;
 }
+#backgroundIMG {
+  background-image: url("/assets/img/backgroundbf-min.jpg");
+  filter:sepia(40%) blur(6px);
+  position: fixed;
+  z-index:-1;
+  background-size:cover;
+  height:100vh;
+  width:100%;
+  top:0px;
+  left:0px;
+}

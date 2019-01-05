@@ -57,7 +57,7 @@
                   <input class="logInput" type="text" name="logEMail" placeholder="email" />
                   <input class="logInput" type="password" name="logPassw" placeholder="password" />
                   <input id="logSubmit" type="submit" name="submitLog" value="submit" />
-                  <br><button type="submit" class="passwordLost" value="true" name="rspw">password?</button>
+                  <br><button type="submit" class="passwordLost" value="true" name="rspw">I forgot my password</button>
               </form>
           </div>';
   } else {
@@ -94,7 +94,7 @@
     <head>
     <link rel="stylesheet" href="../../../assets/css/global_var.css">
     <link rel="stylesheet" href="../../../assets/css/login.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     </head>
     <body>
     </body>
