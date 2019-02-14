@@ -286,4 +286,14 @@
 			}
 			return $users;
 	}
+
+  function getUserEmail($userID) {
+    global $pdo;
+    $sql = "SELECT email FROM user WHERE id = :uID ";
+    $sth = $pdo->prepare($sql);
+    $sth->bindValue(":uID", $userID, PDO::PARAM_INT);
+    $sth->execute();
+    $data = $sth->fetch();
+    return $data["email"];
+  }
 ?>

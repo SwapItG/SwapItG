@@ -12,8 +12,8 @@
 --gold:#faca4d;
 }
 #backgroundIMG {
-  background-image: url("/assets/img/backgroundbf-min.jpg");
-  filter:sepia(40%) blur(6px);
+  background-image: url("https://data1.origin.com/content/dam/originx/web/app/games/battlefield/battlefield-1/apocalypse/bf1-xp4_screenshot_1920x1080_en_ww_3.jpg");
+  filter:sepia(0%) blur(4px) brightness(75%);
   position: fixed;
   z-index:-1;
   background-size:cover;

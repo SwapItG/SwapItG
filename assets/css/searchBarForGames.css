@@ -5,38 +5,31 @@ filter:grayscale(0);
 text-align:center;
 transition:.1s
 }
-
 .removeFilterX:hover {
 cursor:pointer;
 filter:grayscale(0.75)
 }
-
 .searchbar,.searchInput {
 height:38px!important;
 border-radius:0!important;
 box-shadow:0 0 0 rgba(0,0,0,0)
 }
-
 .searchInput:hover {
 background-color:#CCC
 }
-
 .searchbar:focus,.searchInput:focus {
 color:var(--strong-orange)!important
 }
-
 .searchButton {
 height:38px!important;
 width:75px;
 border:none
 }
-
 .searchButton:hover {
 cursor:pointer;
 background-color:var(--lightweight-orange);
 transition:.1s
 }
-
 #autocompleteContainer {
 display:none;
 position:absolute;
@@ -48,7 +41,6 @@ max-height:350px;
 overflow-y:scroll;
 z-index:1;
 }
-
 .autoSuggest {
 cursor:pointer;
 height:35px;
@@ -58,24 +50,20 @@ padding-right:25px;
 padding-top:5px;
 white-space:nowrap;
 }
-
 .autoSuggest:hover {
 color:orange;
 border-right:solid;
 background-color:rgba(0,0,0,0.1)
 }
-
 #autocompleteList {
 list-style-type:none;
 margin-left:-55px;
 margin-right:10px
 }
-
 .autoSuggestIMG {
 width:18px;
 margin-left:5px
 }
-
 #loadScriptIMG {
 position:absolute;
 width:35px;
@@ -83,7 +71,6 @@ display:none;
 z-index:3;
 left:100%
 }
-
 @media only screen and (max-width: 767px) {
 #autocompleteContainer {
 max-height:250px;

@@ -39,8 +39,15 @@
   }
   if ($_POST["submitChanges"] == "save") {
       setAll($_POST["name"],$_POST["info"]);
+      $commentSectionStatus = $_POST["commentSectionAllow"];
+      if (empty($commentSectionStatus)) {
+        $commentSectionStatus = false;
+      } else {
+        $commentSectionStatus = true;
+      }
+      setUserCommentSectionStatus($commentSectionStatus);
       unset($_POST);
-      header('Location: https://swapitg.com/account');
+      //header('Location: https://swapitg.com/account');
   }
   if ($_POST["deleteAccount"] == "confirm") {
       $result = delete_account(getEmail(),$_POST["deletePasswortConfirm"]);
@@ -156,7 +163,7 @@
 ?>
 <html>
   <head>
-    <title>SwapitG <?PHP echo getName()?></title>
+    <title>SwapitG Edit <?PHP echo getName()?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/editAccount.css">
@@ -205,6 +212,22 @@
                 <div class="accountTopic">Description:</div>
                 <div class="accountEdit" id="accountInfo">
                     <textarea placeholder="your personal impressum" id="accountInfoArea" name="info"><?PHP echo getInfo() ?></textarea>
+                </div>
+                <div class="accountTopic">Comments:</div>
+                <div class="accountEdit" id="accountMail">
+                  <?PHP
+                  $commentsAllow;
+                  if (getUserCommentSectionStatus() == true) {
+                    $commentsAllow = "checked";
+                    $commentNote = "Comments will be shown under your profile.";
+                  } else {
+                    $commentsAllow = "";
+                    $commentNote = "No comments will be shown under your profile";
+                  }
+                  ?>
+                  <input type="checkbox" name="commentSectionAllow" <?PHP echo $commentsAllow ?> />
+                  <span id="mail">&nbsp;<?PHP echo $commentNote; ?> &nbsp;</span>
+
                 </div>
                 <div class="accountTopic">Steam:</div>
                 <div class="accountEdit" id="accountLinks">

@@ -7,11 +7,9 @@
   margin:10px;
   background:#eee;
 }
-
 .filter {
   text-align:center;
 }
-
 .filter input {
   margin:30px;
   width:60%;
@@ -22,7 +20,6 @@
   border-radius:5px;
   background:#eee;
 }
-
 * {
   outline:none;
 }

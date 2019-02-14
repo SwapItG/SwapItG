@@ -25,7 +25,7 @@ body {
   margin-top:10px;
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
-  background-color: rgba(50,50,50,0.5);
+  background-color: rgba(30,30,30,0.7);
 }
 .userPostBackground {
   background-color: rgba(0,0,0,0.75);
@@ -194,17 +194,18 @@ body {
   border-style: dashed;
 }
 .item_count {
-  background-color:#333;
+  background-image: linear-gradient(to top right, #d7b151 30%, #fceec9);
   border:solid;
   border-width:0.5px;
-  border-color:var(--gold);
+  border-color:white;
   border-style:groove;
   border-top-right-radius:6px;
   border-bottom-left-radius:6px;
-  font-size:9px !important;
-  font-weight: lighter;
+  font-size:12px !important;
+  text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
   min-width:25px;
-  color:#FFF;
+  color:#222;
+  font-weight:bold;
   font-family: arial;
   letter-spacing:0.75px;
   text-align: center;

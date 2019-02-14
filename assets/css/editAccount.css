@@ -61,7 +61,7 @@ body {
 #accountInfoBox {
     margin:auto;
     width: 800px;
-    background-color:#333338;
+    background-color:rgba(30,30,30,0.7);
     border-radius:3px;
     overflow-x:hidden;
     box-shadow:inset 0px 0px 5px #000;

@@ -19,7 +19,7 @@ body {
     margin:auto;
     width: 95vw;
     max-width:1040px;
-    background-color:#333338;
+    background-color:rgba(30,30,30,0.75);
     border-radius:3px;
 }
 #accountDisplay {
@@ -41,7 +41,8 @@ body {
 }
 #accountInfoBox {
   background-color: inherit;
-  width:85%;
+  padding-right:50px;
+  width:100%;
   margin-top:15px;
 }
 #settingsDisplay {
@@ -112,7 +113,7 @@ body {
   width: 95%;
   max-width:1040px;
   overflow-x: scroll !important;
-  background-color:#333338;
+  background-color:rgba(30,30,30,0.7);
   border-radius:3px;
   margin-top:25px;
   padding-left:5px;
@@ -140,6 +141,9 @@ body {
   }
 }
 @media only screen and (max-width: 875px) {
+    #accountNameBox {
+      width:70%;
+    }
     #linkedAccountsBox {
       padding-bottom:25px;
     }
@@ -182,7 +186,7 @@ body {
         width:125px;
     }
     #accountNameBox {
-        width:65%;
+        width:50%;
     }
     .account {
       margin-top:10px;

@@ -4,10 +4,13 @@
     unset($_POST["submitRegistration"]);
     $registrationResult = register($_POST["regUsername"], $_POST["regEMail"], $_POST["regPassw"], $_POST["confirmRegPassw"]);
     if ($registrationResult == 0) {
+        unset($_POST);
         header('Location: https://swapitg.com/registerValidation?result='.$registrationResult);
     }
   } else {
-    $registrationResult = 6;
+    if (!isset($_POST["agb"]) && $_POST["submitRegistration"] == "CONFIRM") {
+      $registrationResult = 6;
+    }
   }
   include ($_SERVER['DOCUMENT_ROOT'] . "pages/source/header.php");
   include ($_SERVER['DOCUMENT_ROOT'] . "assets/css/button.html");
@@ -32,104 +35,21 @@
         case 6:
             $errorMessage = "You must accept our privacy policy";
             break;
+        default:
+          $errorMessage = "";
   }
 ?>
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swapit</title>
+    <title>Swapit Registration</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/global_var.css">
     <link rel="stylesheet" href="assets/css/index.css">
     <link rel="stylesheet" href="assets/css/searchBarForGames.css">
     <link rel="stylesheet" href="assets/css/Filter.css">
-    <style>
-        form {
-          width:100%;
-        }
-        body {
-          background-color:var(--lightweight-black) !important;
-          color:var(--lightweight-black) !important;
-        }
-        h3 {
-          color:var(--lightweight-orange) !important;
-        }
-        div {
-          border-width:1px;
-        }
-        .regInput {
-          width:85%;
-          border-radius:2px;
-          padding-left:5px;
-          height:30px;
-        }
-        #registration_container {
-          width:100%;
-        }
-        #registration_box {
-          margin:auto;
-          background-color:var(--light-black);
-          max-width:700px;
-          padding:25px;
-          border-radius:6px;
-        }
-        #errorM {
-          color:#F55;
-          font-family:sans-serif;
-          font-size: 12px;
-          letter-spacing: 0.75px;
-        }
-        .registration_flex_box {
-          max-width:90%;
-          display: flex;
-          flex-flow: row wrap;
-          margin:auto;
-        }
-        .RegTopic {
-          width:30%;
-          max-width:150px;
-          margin-bottom:10px;
-          font-family:'Open Sans', sans;
-          font-size: 13px;
-          padding-top:30px;
-          text-align: right;
-          padding-right:25px;
-          color:var(--skyblue);
-        }
-        .RegContent {
-          width:70%;
-          margin-bottom:10px;
-          padding-top:25px;
-          font-size:14px;
-        }
-        #agbText,#agbLink {
-          color:#CCC;
-          margin-bottom:40px;
-          font-size:12px;
-        }
-        #agbText:hover {
-          cursor:auto !important;
-        }
-        #agbLink {
-          color:#d15757;
-          text-decoration: underline;
-        }
-        @media only screen and (max-width: 550px) {
-          .RegTopic {
-            width:100%;
-            max-width:125px;
-            padding:0px;
-            margin:0px;
-            text-align: left;
-          }
-          .RegContent {
-            width:100%;
-            margin-bottom:25px;
-            padding-top:0px;
-          }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/registration.css">
   </head>
   <body>
     <div>
@@ -150,7 +70,7 @@
               <div class="RegTopic">Repeat Password</div>
               <div class="RegContent"><input data-lpignore="true" autocomplete="off" class="regInput" type="password" name="confirmRegPassw" placeholder="" value="<?php if(!empty($_POST["regUsername"])){echo $_POST["confirmRegPassw"];}?>" /></div>
               <div class="RegTopic"></div>
-              <div><input class="checkbox" type="checkbox" name="agb" value="aggreed" /><a id="agbText"> by confirming you aggree with our privacy policies under <a id="agbLink" href="impressum">impressum</a></a></div><br>
+              <div class="RegContent"><input class="checkbox" type="checkbox" name="agb" value="aggreed" /><a id="agbText"> by confirming you aggree with our privacy policies under <a id="agbLink" href="impressum">impressum</a></a></div>
               <div class="RegTopic"></div>
               <div class="RegContent"><button type="submit" class="submitButton saveButton" name="submitRegistration" value="CONFIRM"><i class="fas fa-check"></i> CONFIRM</button></div>
               <div class="RegTopic"></div>

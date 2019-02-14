@@ -6,8 +6,10 @@
   require_once($_SERVER['DOCUMENT_ROOT'] . "/php/userdata_get_set.php");
 
   $selectedTrade = getTradeData($_GET["trID"]);
+  $tradeID = $_GET["trID"];
   $userID = $selectedTrade["user_id"];
-
+  $tradeCommentSectionID = getCommentSection($userID);
+  $userRating = number_format(get_rating($tradeCommentSectionID),2);
 ?>
 <html>
   <head>
@@ -28,6 +30,14 @@
         padding-top: 50%;
         position: relative;
       }
+      .goldStar {
+        width:20px;
+        margin-bottom:3px;
+        margin-left:-5px;
+      }
+      .userRating {
+        font-size: 15px !important;
+      }
     </style>
   </head>
   <body>
@@ -40,9 +50,12 @@
                 <div id="picFrame"><img id="accountPic" src="<?PHP echo getImage($userID) ?>"/></div>
               </div>
               <div id="accountNameBox"><?PHP echo getName($userID); ?></div>
+              <div class="userRating" id="accountNameBox">Rating: <?PHP echo $userRating.'&nbsp;<img class="goldStar" src="/assets/img/icons/gold_star.png" alt="" />'; ?> </div>
               <div id="accountInfoBox"><span><?PHP echo getInfo($userID); ?></span></div>
               <ul id="linkedAccountsBox" style="margin-bottom:-5px">
+                <?PHP if(!empty(getUserEmail($userID))){echo '<li class="account"><img class="accountPic" src="/assets/img/mailicon.png" /><span>'.getUserEmail($userID).'</span></li>';} ?>
                 <?PHP if(!empty(get_steam_data($userID))){echo '<li class="account"><img class="accountPic" src="/assets/img/steamico.png" /><span>'.get_steam_data($userID)["profile_url"].'</span></li>';} ?>
+
               </ul>
             </div>
         </div>
@@ -65,9 +78,16 @@
             </tbody>
           </table>
       </div>
-      <div id="iframeCommentContainer">
-        <iframe id="iframeCommentSection" src="https://swapitg.com/commentSection?trID=<?PHP echo $_GET["trID"] ?>" scrolling="no"></iframe>
-      </div>
+      <?php
+      $commentsAllow;
+        if (getUserCommentSectionStatus($userID) == true) {
+          echo '<div id="iframeCommentContainer">
+            <iframe id="iframeCommentSection" src="https://swapitg.com/commentSection?trID='.$_GET["trID"].'" scrolling="no"></iframe>
+          </div>';
+        } else {
+          echo '<br /><span style="color:#f33;font-size:20px">Comments are disabled by user</span>';
+        }
+      ?>
     </div>
   </div>
     <script>

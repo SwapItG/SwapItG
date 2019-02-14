@@ -1,0 +1,85 @@
+form {
+  width:100%;
+}
+body {
+  background-color:var(--lightweight-black) !important;
+  color:var(--lightweight-black) !important;
+}
+h3 {
+  color:var(--lightweight-orange) !important;
+}
+div {
+  border-width:1px;
+}
+.regInput {
+  width:85%;
+  border-radius:2px;
+  padding-left:5px;
+  height:30px;
+}
+#registration_container {
+  width:100%;
+}
+#registration_box {
+  margin:auto;
+  background-color:rgba(30,30,30,0.75);
+  max-width:900px;
+  padding:25px;
+  box-shadow: 0px 0px 15px #000;
+}
+#errorM {
+  color:#F55;
+  font-family:sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.75px;
+}
+.registration_flex_box {
+  max-width:100%;
+  display: flex;
+  flex-flow: row wrap;
+  margin:auto;
+  margin-left:25px;
+}
+.RegTopic {
+  width:30%;
+  max-width:150px;
+  margin-bottom:10px;
+  font-family:'Open Sans', sans;
+  font-size: 13px;
+  padding-top:30px;
+  text-align: right;
+  padding-right:25px;
+  color:var(--skyblue);
+}
+.RegContent {
+  width:70%;
+  margin-bottom:10px;
+  padding-top:25px;
+  font-size:14px;
+}
+#agbText,#agbLink {
+  color:#CCC;
+  margin-bottom:40px;
+  font-size:12px;
+}
+#agbText:hover {
+  cursor:auto !important;
+}
+#agbLink {
+  color:#d15757;
+  text-decoration: underline;
+}
+@media only screen and (max-width: 650px) {
+  .RegTopic {
+    width:100%;
+    max-width:125px;
+    padding:0px;
+    margin:0px;
+    text-align: left;
+  }
+  .RegContent {
+    width:100%;
+    margin-bottom:25px;
+    padding-top:0px;
+  }
+}

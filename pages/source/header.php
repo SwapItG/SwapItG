@@ -4,7 +4,7 @@ require_once(__DIR__ . "../../../php/session.php");
 ?>
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="17Ia-Aotx4mQG7ayi2W9l97hAJcgF8GB9FCrU34zdA0" />
@@ -18,9 +18,9 @@ require_once(__DIR__ . "../../../php/session.php");
             z-index:1 !important;
         }
     </style>
-</head>
-<div id="backgroundIMG"></div>
-<body style="font-size:12;">
+  </head>
+  <div id="backgroundIMG"></div>
+  <body style="font-size:12;">
     <nav style="position:inherit" class="navbar navbar-light navbar-expand-md fixed-top navigation-clean navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
           <a class="navbar-brand" href="https://swapitg.com" style="padding:0px;margin-left:0px;height:75px;">

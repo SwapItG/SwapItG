@@ -360,7 +360,7 @@ switch ($lang) {
  ?>
 <html>
   <head>
-    <title>Impressum</title>
+    <title>SwapitG Impressum</title>
     <style>
       #backgroundIMG {
         background-image:none
@@ -378,7 +378,7 @@ switch ($lang) {
   <div id="content">
     <div id="langSelector">
       <select onchange="changelang(this)">
-        <option value="en"<?PHP if($lang=="en"){echo "selected";}?>>englisch</option>
+        <option value="en"<?PHP if($lang=="en"){echo "selected";}?>>english</option>
         <option value="de"<?PHP if($lang=="de"){echo "selected";}?>>german</option>
       </select>
     </div>

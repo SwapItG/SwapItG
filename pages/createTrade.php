@@ -48,6 +48,9 @@
     if ($result == 3) {
       $result = "Some inputs are too long, please make them shorter!";
     }
+    if ($result == 0) {
+      header('Location: https://swapitg.com');
+    }
     unset($_POST);
   }
 ?>
@@ -58,15 +61,16 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/createTrade.css">
     <link rel="stylesheet" href="assets/css/fontawesome.css">
+    <link rel="shortcut icon" href="/assets/img/icons/swapitg_icon.png" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <link rel="stylesheet" href="assets/min/css/searchBarForGames.css">
-    <title>swapitG create trade</title>
+    <title>SwapitG Create Trade</title>
   </head>
   <body id="body">
   <?php include "source/header.php" ?>
   <?php include ($_SERVER['DOCUMENT_ROOT'] . "assets/css/button.html"); ?>
     <div id="CreateTradeDiv">
-      <?PHP echo "<div style='color:yellow;margin-left:'>".$result."</div>";?>
+
       <form method="POST" action="">
         <!-- searchbar for games -->
         <div id="searchbarDiv">
@@ -151,7 +155,6 @@
         object.parentElement.remove();
         var item_list = new Array();
         var item_id = new Array();
-        console.log(container);
         for (i=0;i<20;i++) {
           var item = document.getElementById("item" + container + i);
           if (item != null) {
@@ -193,14 +196,12 @@
       }
       function addSpecialAttribute(selectedGame,container,id) {
         game_array = new Array();
-        console.log(selectedGame);
         for ($i=0;$i<games.length;$i++) {
           if (games[$i][0] == selectedGame) {
             game_array = games[$i];
 
           }
         }
-        console.log(game_array);
         for ($i=1;$i<game_array.length;$i++) {
           var attribute_html = "";
           if (game_array[$i][0] == "array") {

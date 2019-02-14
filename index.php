@@ -184,8 +184,8 @@
               </div>
               <div id="searchAttributes">
               <select id="itemDesire" name="itemDesire">
-                <option <?PHP if($_GET["itemDesire"] == "HAS"){echo "selected";} ?>>I Want..</option>
-                <option <?PHP if($_GET["itemDesire"] == "WANT"){echo "selected";} ?>>I Have..</option>
+                <option value="HAS" <?PHP if($_GET["itemDesire"] == "HAS"){echo "selected";} ?>>I Want..</option>
+                <option value="WANT" <?PHP if($_GET["itemDesire"] == "WANT"){echo "selected";} ?>>I Have..</option>
               </select>
               <div id="specialAttributes">
               </div>

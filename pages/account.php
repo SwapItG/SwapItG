@@ -2,7 +2,6 @@
   require_once($_SERVER['DOCUMENT_ROOT'] . "/php/register_login.php");
   require_once($_SERVER['DOCUMENT_ROOT'] . "/php/trade.php");
   require_once($_SERVER['DOCUMENT_ROOT'] . "/php/steamauth.php");
-
   if ($_POST["submit"] == "cancel") {
       header('Location: https://swapitg.com/account');
   }
@@ -14,7 +13,6 @@
     delete_trade($_GET["trade"]);
     header('Location: https://swapitg.com/account');
   }
-
   include ($_SERVER['DOCUMENT_ROOT'] . "pages/source/header.php");
   $gameID = null;
   $tradeCounts = 50;
@@ -29,8 +27,6 @@
         }
       }
   }
-
-  //echo "<a style='color:yellow'>".$tradeList["backward"]."#</a>";
 ?>
 <html>
   <head>
@@ -41,6 +37,11 @@
     <link rel="stylesheet" href="assets/css/account.css">
     <link rel="stylesheet" href="assets/css/searchBarForGames.css">
     <title>SwapG Account</title>
+    <style>
+      .userPostDIV {
+        background-color: inherit !important;
+      }
+    </style>
   </head>
   <body>
     <script src="https://cdn.jsdelivr.net/npm/lazyload@2.0.0-beta.2/lazyload.js"></script>
@@ -55,7 +56,7 @@
               <div id="accountInfoBox"><span><?PHP echo getInfo(); ?></span></div>
               <ul id="linkedAccountsBox">
                 <li class="account"><img class="accountPic" src="/assets/img/mailicon.png" /><?PHP echo '<span>'.getEmail().'</span>' ?></li>
-                <li class="account"><img class="accountPic" src="/assets/img/steamico.png" /><?PHP echo '<span>'.get_steam_data()["profile_url"].'</span>' ?></li>
+                <?PHP if (!empty(get_steam_data())){ echo '<li class="account"><img class="accountPic" src="/assets/img/steamico.png" /><span>'.get_steam_data()["profile_url"].'</span></li>'; } ?>
               </ul>
             </div>
             <div id="settingsDisplay">
